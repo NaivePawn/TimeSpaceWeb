@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<style type="text/css">
+    body{ margin:0px;}  <!--body顶格，body最顶部不留空白-->
+</style>
+<Script Language="JavaScript">
+    function getUniqueName()
+    {
+        document.timeSpaceForm.action="getUniqueName";
+        document.timeSpaceForm.submit();
+    }
+
+    function previewSingle()
+    {
+        document.timeSpaceForm.action="previewSingle";
+        document.timeSpaceForm.submit();
+    }
+    function previewSingleMap()
+    {
+        document.timeSpaceForm.action="previewSingleMap";
+        document.timeSpaceForm.submit();
+    }
+
+
+</Script>
+<head>
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}"/>
+    <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body >
+<div >
+    <h2>时空分析组件</h2>
+    <!--<button type="button" class="btn btn-default " onclick=" window.location.href='/'">重置</button>-->
+
+</div>
+
+<div class="page-header">
+    <h3>数据源配置</h3>
+<br/>
+<form class="form-inline " th:action="@{/preview} ">
+    <div class="form-group">
+        <label >数据库地址</label>
+        <input  type="text" class="form-control" id="dataSourceUrl" name="dataSourceUrl" placeholder="数据库" th:value="${session.dataSource == null}? '': ${session.dataSource.dataSourceUrl}" />
+    </div>
+    <div class="form-group" >
+        <label >数据库表名</label>
+        <input type="text" class="form-control" id="tableName" name="tableName" placeholder="表名"
+               th:value="${session.dataSource == null}? '': ${session.dataSource.tableName}"/>
+    </div>
+    <div class="form-group">
+        <label >用户名</label>
+        <input type="text" class="form-control" id="userName" name="userName" placeholder="用户名"
+               th:value="${session.dataSource == null}? '': ${session.dataSource.userName}"/>
+    </div>
+    <div class="form-group">
+        <label >密码</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="密码"
+               th:value="${session.dataSource == null}? '': ${session.dataSource.password}"/>
+    </div>
+    <button type="submit" class="btn btn-default" >预览</button>
+</form>
+</div>
+<p th:if="${msg!=null}" ><font size="5" color="red">数据源配置错误</font></p>
+
+<div class="page-header" th:if="${session.dataSource != null}">
+    <h3>数据库预览</h3>
+    <br/>
+    <table class="table table-hover">
+        <thead>
+        <tr >
+            <th th:each="columnName:${session.previewColumn}" th:text="${columnName}">字段</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="line_data:${session.previewData}">
+            <td th:each="column_data:${line_data}" th:text="${column_data}">数据</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="page-header " th:if="${session.dataSource != null}">
+    <h3>时空分析设置</h3>
+    <br/>
+    <br/>
+    <form class="form-inline " name = "timeSpaceForm" >
+        <div class="form-group col-md-3">
+            <label >人名字段</label>
+            <select class="form-control" name="nameColumn">
+                <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value ="${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.nameColumn==columnName}"></option>
+            </select>
+        </div>
+        <div class="form-group col-md-3"  >
+            <label >时间字段</label>
+            <select class="form-control" name="timeColumn">
+                <option th:each="columnName:${session.previewColumn}" th:text="${columnName} " th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.timeColumn==columnName}"></option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label >地点字段</label>
+            <select class="form-control" name="spaceColumn">
+                <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.spaceColumn==columnName}"></option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-default " onclick="getUniqueName()">筛选</button>
+        <br/>
+        <br/>
+        <br/>
+
+        <div class="form-group col-md-3" >
+            <label >人员选择</label>
+            <select class="form-control" name="uniqueName">
+                <option  th:each="columnName:${session.uniqueNameList}" th:text="${columnName}" th:value = "${columnName}"></option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-default " onclick="previewSingle()">预览个人轨迹</button>
+        <button type="button" class="btn btn-default " onclick="previewSingleMap()">预览个人轨迹图</button>
+    </form>
+
+    <br/>
+    <br/>
+
+
+</div>
+
+<div class="page-header" th:if="${session.dataSource != null and session.timeSpaceForm !=null}" >
+    <h3>个人轨迹预览</h3>
+    <br/>
+    <table class="table table-hover">
+        <thead>
+        <tr >
+            <th th:each="columnName:${session.previewSingleColumn}" th:text="${columnName}">字段</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="line_data:${session.previewSingleData}">
+            <td th:each="column_data:${line_data}" th:text="${column_data}">数据</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--<div class="page-header" th:if="${session.dataSource != null and session.timeSpaceForm !=null}" >-->
+    <!--<h3>个人轨迹图预览</h3>-->
+    <!--<br/>-->
+
+<!--</div>-->
+
+</body>
+</html>
