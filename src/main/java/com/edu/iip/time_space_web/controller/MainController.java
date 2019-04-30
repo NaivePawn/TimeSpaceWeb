@@ -101,12 +101,8 @@ public class MainController {
     }
 
     @RequestMapping("previewSingleMap")
-    private void previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
-        try {
-            httpServletResponse.sendRedirect("http://localhost:8080/HelloWorld");
-        }catch (Exception r){
-            return;
-        }
+    private String previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
+        return "redirect:home.html";
     }
 
 }
