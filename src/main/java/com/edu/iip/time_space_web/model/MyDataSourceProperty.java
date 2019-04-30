@@ -43,6 +43,11 @@ public class MyDataSourceProperty {
                 '}';
     }
 
+    @Override
+    public int hashCode(){
+        return toString().hashCode();
+    }
+
     public String getDataSourceUrl() {
         return dataSourceUrl;
     }

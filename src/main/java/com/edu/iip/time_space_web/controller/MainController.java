@@ -1,10 +1,10 @@
 package com.edu.iip.time_space_web.controller;
 
 import com.alibaba.druid.support.json.JSONUtils;
-import com.edu.iip.time_space_web.model.MyDataSourceProperty;
-import com.edu.iip.time_space_web.model.PreviewData;
-import com.edu.iip.time_space_web.model.TimeSpaceForm;
+import com.edu.iip.time_space_web.model.*;
 import com.edu.iip.time_space_web.service.MainService;
+import com.edu.iip.time_space_web.service.TimeSpaceService;
+import com.edu.iip.time_space_web.util.DataSourceUtil;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -78,8 +78,6 @@ public class MainController {
 
     @RequestMapping("/previewSingle")
     private String previewSingle(TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
-
-
         if(httpSession.getAttribute("dataSource") == null){
             return "index";
         }
@@ -102,7 +100,27 @@ public class MainController {
 
     @RequestMapping("previewSingleMap")
     private String previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
-        return "redirect:home.html";
+        MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
+        TimeSpaceForm timeSpaceForm = (TimeSpaceForm) httpSession.getAttribute("timeSpaceForm");
+//        String name = timeSpaceForm.getUniqueName();
+        String name = "李白";
+        System.out.println(myDataSourceProperty.toString());
+        System.out.println(timeSpaceForm.getUniqueName());
+        List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty);
+        peopleOrientations.toString();
+        for( PeopleOrientation peopleOrientation : peopleOrientations){
+            System.out.println(peopleOrientation.getName() + " : ");
+            for(Orientation orientation: peopleOrientation.getOrientations()){
+                System.out.println(orientation.toString());
+            }
+        }
+        String url = "redirect:track.html";
+        for(PeopleOrientation peopleOrientation: peopleOrientations){
+            if(peopleOrientation.getName().compareTo(name) == 0){
+                url += "?" + DataSourceUtil.locationsFormatToString(peopleOrientation.getOrientations());
+            }
+        }
+        return url;
     }
 
 }

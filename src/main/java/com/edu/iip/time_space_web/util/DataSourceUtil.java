@@ -1,8 +1,9 @@
 package com.edu.iip.time_space_web.util;
 
 import com.edu.iip.time_space_web.model.MyDataSourceProperty;
+import com.edu.iip.time_space_web.model.Orientation;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
+import java.util.List;
 import javax.sql.DataSource;
 
 /**
@@ -19,4 +20,12 @@ public class DataSourceUtil {
         return dataSource;
     }
 
+    public static String locationsFormatToString(List<Orientation> orientations){
+        String str = "";
+        for (Orientation ori: orientations){
+            str += String.valueOf(ori.getLng()) + "," + String.valueOf(ori.getLat()) + "&";
+            System.out.println(str);
+        }
+        return str.substring(0, str.length()-1);
+    }
 }
