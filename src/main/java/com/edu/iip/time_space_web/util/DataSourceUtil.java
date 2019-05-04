@@ -14,9 +14,13 @@ public class DataSourceUtil {
 
     public static DataSource createDataSource (MyDataSourceProperty myDataSourceProperty)throws Exception{
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        if(myDataSourceProperty.getDataSourceUrl().contains("mysql"))
         dataSource.setUrl(myDataSourceProperty.getDataSourceUrl()+"?useUnicode=true&characterEncoding=UTF-8");
+        else
+            dataSource.setUrl(myDataSourceProperty.getDataSourceUrl());
         dataSource.setUsername(myDataSourceProperty.getUserName());
         dataSource.setPassword(myDataSourceProperty.getPassword());
+
         return dataSource;
     }
 

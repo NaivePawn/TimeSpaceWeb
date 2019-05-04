@@ -102,8 +102,8 @@ public class MainController {
     private String previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
         MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
         TimeSpaceForm timeSpaceForm = (TimeSpaceForm) httpSession.getAttribute("timeSpaceForm");
-//        String name = timeSpaceForm.getUniqueName();
-        String name = "李白";
+        String name = timeSpaceForm.getUniqueName();
+        //String name = "李白";
         System.out.println(myDataSourceProperty.toString());
         System.out.println(timeSpaceForm.getUniqueName());
         List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty);

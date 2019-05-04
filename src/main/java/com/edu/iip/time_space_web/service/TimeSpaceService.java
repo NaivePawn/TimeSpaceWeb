@@ -29,10 +29,16 @@ public class TimeSpaceService {
     }
 
     public static List<PeopleOrientation> getPeopleOrientations(MyDataSourceProperty myDataSourceProperty){
+        Connection conn = null;
+        Statement statement = null;
         try {
-            Connection conn = MysqlUtil.getConnection(myDataSourceProperty);
-            Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + myDataSourceProperty.getTableName());
+            conn = MysqlUtil.getConnection(myDataSourceProperty);
+            statement = conn.createStatement();
+            ResultSet resultSet = null;
+            if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE"))
+                resultSet = statement.executeQuery("SELECT * FROM " + "\""+myDataSourceProperty.getTableName()+ "\"");
+            else
+                resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName());
             Map<String, List<Orientation> > hashMapPeopleOrientations = new HashMap<>();
             while (resultSet.next()) {
                 String name = resultSet.getString(2);
@@ -49,12 +55,20 @@ public class TimeSpaceService {
                 peopleOrientation.setOrientations(hashMapPeopleOrientations.get(name));
                 peopleOrientations.add(peopleOrientation);
             }
-            statement.close();
-            conn.close();
+
             return peopleOrientations;
         }catch (Exception e){
             e.printStackTrace();
             return null;
+        }finally {
+            try {
+                if(statement!=null)
+                    statement.close();
+                if(conn !=null)
+                    conn.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

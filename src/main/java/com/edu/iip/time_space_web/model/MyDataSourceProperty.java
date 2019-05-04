@@ -12,23 +12,15 @@ public class MyDataSourceProperty {
     private String tableName;
     private String userName;
     private String password;
-    private String driverClass;
 
     public MyDataSourceProperty(String dataSourceUrl, String tableName, String userName, String password) {
-        this.dataSourceUrl = dataSourceUrl;
-        this.tableName = tableName;
-        this.userName = userName;
-        this.password = password;
-        this.driverClass = DriverClassUtil.MySQL.getDriverClass();
+        this.dataSourceUrl = dataSourceUrl.trim();
+        this.tableName = tableName.trim();
+        this.userName = userName.trim();
+        this.password = password.trim();
     }
 
-    public String getDriverClass() {
-        return driverClass;
-    }
 
-    public void setDriverClass(String driverClass) {
-        this.driverClass = driverClass;
-    }
 
     public MyDataSourceProperty() {
     }

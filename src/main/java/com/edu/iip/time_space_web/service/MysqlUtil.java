@@ -43,6 +43,8 @@ public class MysqlUtil {
         }catch (SQLException ex){
             ex.printStackTrace();
             return null;
+        }finally {
+            
         }
     }
 }

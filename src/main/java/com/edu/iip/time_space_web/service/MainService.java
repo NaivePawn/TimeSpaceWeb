@@ -28,7 +28,14 @@ public class MainService {
             DataSource dataSource = DataSourceUtil.createDataSource(myDataSourceProperty);
             Connection connection = dataSource.getConnection();
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + myDataSourceProperty.getTableName()+" limit 10");
+            ResultSet resultSet = null;
+            if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE")) {
+                resultSet = statement.executeQuery("SELECT * FROM " + "\"" + myDataSourceProperty.getTableName() + "\"" + " where rownum<=10");
+            }
+
+            else
+                resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName()+" limit 10");
+
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             int count = resultSetMetaData.getColumnCount();
             previewData = new PreviewData();
@@ -59,11 +66,15 @@ public class MainService {
     public List<Object> getUniqueName(MyDataSourceProperty myDataSourceProperty, TimeSpaceForm timeSpaceForm){
         PreviewData previewData;
         List<Object> res = new ArrayList<>();
+        Connection connection = null;
+        Statement statement = null;
         try {
             DataSource dataSource = DataSourceUtil.createDataSource(myDataSourceProperty);
-            Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement();
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
             String sqlFormat = "SELECT DISTINCT %s FROM %s";
+            if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE"))
+                sqlFormat = "SELECT DISTINCT \"%s\" FROM \"%s\"";
             String sql = String.format(sqlFormat,timeSpaceForm.getNameColumn(),myDataSourceProperty.getTableName());
             ResultSet resultSet = statement.executeQuery(sql);
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
@@ -71,13 +82,21 @@ public class MainService {
             while (resultSet.next()) {
                 res.add(resultSet.getObject(1));
             }
-            statement.close();
-            connection.close();
+
 
         }catch (Exception e){
             e.printStackTrace();
             return res;
         }finally {
+            try {
+                if(statement!=null)
+                    statement.close();
+                if(connection !=null)
+                    connection.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
 
         }
         return res;
@@ -85,11 +104,15 @@ public class MainService {
 
     public PreviewData previewSingle(MyDataSourceProperty myDataSourceProperty, TimeSpaceForm timeSpaceForm){
         PreviewData previewData;
+        Connection connection =null;
+        Statement statement = null;
         try {
             DataSource dataSource = DataSourceUtil.createDataSource(myDataSourceProperty);
-            Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement();
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
             String sqlFormat = "SELECT %s,%s,%s FROM %s WHERE %s='%s' ORDER BY %s LIMIT 10";
+            if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE"))
+                sqlFormat = "SELECT \"%s\",\"%s\",\"%s\" FROM \"%s\" WHERE \"%s\"='%s' AND rownum<=10 ORDER BY \"%s\"";
             String sql = String.format(sqlFormat,timeSpaceForm.getNameColumn(),timeSpaceForm.getTimeColumn(),timeSpaceForm.getSpaceColumn(),myDataSourceProperty.getTableName(),timeSpaceForm.getNameColumn(),timeSpaceForm.getUniqueName(),timeSpaceForm.getTimeColumn());
             System.out.println(sql);
             ResultSet resultSet = statement.executeQuery(sql);
@@ -115,7 +138,14 @@ public class MainService {
             e.printStackTrace();
             return null;
         }finally {
-
+            try {
+                if(statement!=null)
+                    statement.close();
+                if(connection !=null)
+                    connection.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         return previewData;
     }
