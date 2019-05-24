@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Service
 public class MainService {
-
+    private static int previewNumber = 30;
     public PreviewData preview(MyDataSourceProperty myDataSourceProperty){
         PreviewData previewData;
         try {
@@ -30,11 +30,11 @@ public class MainService {
             Statement statement = connection.createStatement();
             ResultSet resultSet = null;
             if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE")) {
-                resultSet = statement.executeQuery("SELECT * FROM " + "\"" + myDataSourceProperty.getTableName() + "\"" + " where rownum<=10");
+                resultSet = statement.executeQuery("SELECT * FROM " + "\"" + myDataSourceProperty.getTableName() + "\"" + " where rownum<="+previewNumber);
             }
 
             else
-                resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName()+" limit 10");
+                resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName()+" limit "+previewNumber);
 
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             int count = resultSetMetaData.getColumnCount();
@@ -110,9 +110,9 @@ public class MainService {
             DataSource dataSource = DataSourceUtil.createDataSource(myDataSourceProperty);
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            String sqlFormat = "SELECT %s,%s,%s FROM %s WHERE %s='%s' ORDER BY %s LIMIT 10";
+            String sqlFormat = "SELECT %s,%s,%s FROM %s WHERE %s='%s' ORDER BY %s LIMIT "+previewNumber;
             if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE"))
-                sqlFormat = "SELECT \"%s\",\"%s\",\"%s\" FROM \"%s\" WHERE \"%s\"='%s' AND rownum<=10 ORDER BY \"%s\"";
+                sqlFormat = "SELECT \"%s\",\"%s\",\"%s\" FROM \"%s\" WHERE \"%s\"='%s' AND rownum<="+previewNumber+" ORDER BY \"%s\"";
             String sql = String.format(sqlFormat,timeSpaceForm.getNameColumn(),timeSpaceForm.getTimeColumn(),timeSpaceForm.getSpaceColumn(),myDataSourceProperty.getTableName(),timeSpaceForm.getNameColumn(),timeSpaceForm.getUniqueName(),timeSpaceForm.getTimeColumn());
             System.out.println(sql);
             ResultSet resultSet = statement.executeQuery(sql);

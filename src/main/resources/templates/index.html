@@ -23,6 +23,12 @@
         document.timeSpaceForm.submit();
     }
 
+    function previewMap()
+    {
+        document.timeSpaceForm.action="previewMap";
+        document.timeSpaceForm.submit();
+    }
+
 
 </Script>
 <head>
@@ -110,6 +116,8 @@
         </div>
 
         <button type="button" class="btn btn-default " onclick="getUniqueName()">筛选</button>
+        <button type="button" class="btn btn-default " onclick="previewMap()">综合轨迹图</button>
+
         <br/>
         <br/>
         <br/>
@@ -148,11 +156,7 @@
     </table>
 </div>
 
-<!--<div class="page-header" th:if="${session.dataSource != null and session.timeSpaceForm !=null}" >-->
-    <!--<h3>个人轨迹图预览</h3>-->
-    <!--<br/>-->
 
-<!--</div>-->
 
 </body>
 </html>

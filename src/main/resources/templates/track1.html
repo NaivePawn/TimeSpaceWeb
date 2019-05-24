@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>  
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+	<title>Track Presentation</title>
+	<style type="text/css">  
+		html{height:100%}  
+		body{height:100%;margin:0px;padding:0px}  
+		#container{height:100%;margin: 20px;}  
+	</style>  
+	<script language="JavaScript" src="http://api.map.baidu.com/api?v=3.0&amp;ak=YWdGplhYjUGQ3GtpKNeuTM2S;"></script>
+    <a href="index1.html" class="button">返回</a>
+</head>
+
+<body>
+<div id="container"></div>
+
+<script language="JavaScript" th:inline="javascript">
+
+    /* 用途: 接收地直栏参数 取id=1 根据ID的值 */
+
+    // 实时轨迹demo。
+    // 实际运用的话可能ajax实时读取后台数据，加载到地图上。
+
+
+    // 获取随机数
+    function getRandom(n){
+        return Math.floor(Math.random()*n+1)
+    }
+
+    //在轨迹点上创建图标，并添加点击事件，显示轨迹点信息。points,数组。
+    function addMarker(points,places,times,label){
+        var pointsLen = points.length;
+        if(pointsLen == 0){
+            return;
+        }
+        var myIcon = new BMap.Icon("track.ico", new BMap.Size(5, 5), {
+            offset: new BMap.Size(25, 25)
+        });
+
+        // 创建标注对象并添加到地图
+//        <![CDATA[
+        for(var i = 0;i<pointsLen;i++){
+            var point = new BMap.Point(points[i].lng,points[i].lat);
+            var uuid = points[i].lng + "iip" + points[i].lat;
+            var marker = new BMap.Marker(point, {icon: myIcon});
+            var title =  label+"<br>"+places[i]+" "+times[i];
+
+            if(uuid in markerMap) {
+                marker = (markerMap[uuid]);
+                title = marker.getTitle() + "<br><br>" + label+"<br>"+places[i]+" "+times[i];
+            }
+
+            //var title = marker.getTitle();
+            //console.log(title);
+            marker.setTitle(title);
+            marker.setLabel("laka");
+            console.log(title);
+
+            map.addOverlay(marker);
+
+
+            //添加信息窗口代码，可按情况进行修改添加
+            var sContent =
+                '<ul style="margin:0 0 2px 0;padding:0.1em 0">'
+                +'<li style="line-height: 15px;font-size: 10px;">'
+                +'<span style="width: 120px;display: inline;">'+title+'<a></li>'
+                +'</ul>';
+            var infoWindow = new BMap.InfoWindow(sContent); //创建信息窗口对象
+            marker.openInfoWindow(infoWindow); //图片加载完后重绘infoWindow
+            marker.addEventListener("click", function() {
+                // 调用了marker对象的openInfoWindow方法
+                this.openInfoWindow(infoWindow);
+            });
+            markerMap[uuid] = marker;
+
+        }
+//        ]]>
+    }
+
+    //添加线
+    function addLine(points,color){
+
+        var linePoints = [],pointsLen = points.length,i,polyline;
+        if(pointsLen==0){
+            return;
+        }
+        // 创建标注对象并添加到地图
+//        <![CDATA[
+        for(i = 0;i<pointsLen;i++){
+            linePoints.push(new BMap.Point(points[i].lng,points[i].lat));
+        }
+//        ]]>
+
+        polyline = new BMap.Polyline(linePoints, {strokeColor:color, strokeWeight:5, strokeOpacity:1});   //创建折线
+        map.addOverlay(polyline);   //增加折线
+    }
+
+
+    // 根据传入的点添加线路，功能和dynamicLine类似，不过前者是添加随机产生的点
+    function addRoute(id,trace){
+        console.log('debug addRoute id: '+id)
+        var lng = positions[id][0];
+        var lat = positions[id][1];
+        var point = {"lng":lng,"lat":lat,"status":1,"id":id}
+        var place = places[id];
+        var time = times[id];
+        var makerPoints = [];
+        var makerPlaces = [];
+        var makerTimes = [];
+        var len;
+
+        makerPoints.push(point);
+        makerPlaces.push(place);
+        makerTimes.push(time)
+        addMarker(makerPoints,makerPlaces,makerTimes,trace.label);//增加对应该的轨迹点
+        points.push(point);
+        bPoints.push(new BMap.Point(lng,lat));
+        len = points.length;
+        newLinePoints = points.slice(len-2, len);//最后两个点用来画线。
+
+        addLine(newLinePoints,trace.color);//增加轨迹线
+        setZoom(bPoints);
+//        <![CDATA[
+        if (id+1 < positions.length){
+            setTimeout(function(){addRoute(id+1,trace)}, 1000);
+        }else{
+            next();
+        }
+//        ]]>
+    }
+
+    //根据点信息实时更新地图显示范围，让轨迹完整显示。设置新的中心点和显示级别.
+    //更新。设置不是每次增加点都重新设置显示范围。因为有可能会想放大了看。
+    function setZoom(bPoints){
+        var view = map.getViewport(eval(bPoints));
+        if(map.oldView != JSON.stringify(view)){
+            var mapZoom = view.zoom;
+            var centerPoint = view.center;
+            map.centerAndZoom(centerPoint,mapZoom);
+            map.oldView = JSON.stringify(view);
+        }
+
+    }
+    // 解析网址，获取到？号后面带着的经纬度信息
+    // format: lng1,lat1&amp;lng2,lat2&amp;lng3,lat3...
+    function parseUrl(urlinfo){
+        len=urlinfo.length;//获取url的长度
+        //alert(len);
+        offset=urlinfo.indexOf("?");//设置参数字符串开始的位置
+        //alert(offset);
+        newsidinfo=urlinfo.substr(offset+1,len)//取出参数字符串 这里会获得类似“id=1”这样的字符串
+        newsids=newsidinfo.split("=");//对获得的参数字符串按照“=”进行分割
+        newsid=newsids[1];//得到参数值
+        newsname=newsids[0];//得到参数名字
+        locations = newsidinfo.split("&amp;");
+        positions = [];
+        locations.forEach(location=>{
+            loc = location.split(",");
+        console.log(loc);
+        positions.push( [parseFloat(loc[0]), parseFloat(loc[1])] )
+    })
+        return positions;
+    }
+
+    function parsePlace(placesinfo){
+        len=placesinfo.length;//获取url的长度
+        //alert(len);
+        offset=placesinfo.indexOf("?");//设置参数字符串开始的位置
+        //alert(offset);
+        var info=placesinfo.substr(offset+1,len);//取出参数字符串 这里会获得类似“id=1”这样的字符串
+
+        var places_list = info.split("&amp;");
+
+        places = [];
+        places_list.forEach(pl=>{
+            places.push(pl);
+        })
+        return places;
+    }
+
+    function parseTime(timeinfo){
+        len=timeinfo.length;//获取url的长度
+        //alert(len);
+        offset=timeinfo.indexOf("?");//设置参数字符串开始的位置
+        //alert(offset);
+        var info=timeinfo.substr(offset+1,len);//取出参数字符串 这里会获得类似“id=1”这样的字符串
+
+        var places_list = info.split("&amp;");
+        times = [];
+        places_list.forEach(pl=>{
+
+            times.push(pl);
+    })
+        return times;
+    }
+
+    function next() {
+        if(j!=[[${data.size()}]]){
+            var d = [[${data}]][j];
+            urlinfo = d.path;
+            //数据准备,
+            positions = parseUrl(urlinfo);//从html参数得到的解析值
+            places = parsePlace(d.places);
+            times = parseTime(d.time);
+
+            points = [];//原始点信息数组
+            bPoints = [];//百度化坐标数组。用于更新显示范围。
+            setTimeout(function () {
+                addRoute(0,d);
+            }, 1000);//动态生成新的点。
+
+            j = j+1;
+        }
+    }
+
+
+
+    //地图操作开始
+    var map = new BMap.Map("container");
+
+    map.centerAndZoom(new BMap.Point(103.388611,35.563611), 5); //初始显示中国。
+
+    map.enableScrollWheelZoom();//滚轮放大缩小
+    var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
+    var top_left_navigation = new BMap.NavigationControl();
+    map.addControl(top_left_control);
+    map.addControl(top_left_navigation);
+    var j=0;
+    var positions = [];//从html参数得到的解析值
+    var places = [];
+    var times = [];
+    var points = [];//原始点信息数组
+    var bPoints = [];//百度化坐标数组。用于更新显示范围。
+    var markerMap = new Map();
+    next();
+
+
+</script>
+
+
+</body>
+
+</html>
