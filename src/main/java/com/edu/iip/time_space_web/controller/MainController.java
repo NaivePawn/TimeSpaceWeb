@@ -108,40 +108,14 @@ public class MainController {
         return "index";
     }
 
-//    @RequestMapping("previewSingleMap")
-//    private String previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
-//        MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
-//        TimeSpaceForm timeSpaceForm = (TimeSpaceForm) httpSession.getAttribute("timeSpaceForm");
-//        String name = timeSpaceForm.getUniqueName();
-//        //String name = "李白";
-//        System.out.println(myDataSourceProperty.toString());
-//        System.out.println(timeSpaceForm.getUniqueName());
-//        List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty);
-//        peopleOrientations.toString();
-//        for( PeopleOrientation peopleOrientation : peopleOrientations){
-//            System.out.println(peopleOrientation.getName() + " : ");
-//            for(Orientation orientation: peopleOrientation.getOrientations()){
-//                System.out.println(orientation.toString());
-//            }
-//        }
-//        String url = "redirect:track1.html";
-//        for(PeopleOrientation peopleOrientation: peopleOrientations){
-//            if(peopleOrientation.getName().compareTo(name) == 0){
-//                url += "?" + DataSourceUtil.locationsFormatToString(peopleOrientation.getOrientations());
-//            }
-//        }
-//        return url;
-//    }
+
 
     @RequestMapping("previewSingleMap")
     private ModelAndView previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
         MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
         TimeSpaceForm timeSpaceForm = (TimeSpaceForm) httpSession.getAttribute("timeSpaceForm");
         String name = timeSpaceForm.getUniqueName();
-        //String name = "李白";
-        //System.out.println(myDataSourceProperty.toString());
-        //System.out.println(timeSpaceForm.getUniqueName());
-        List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty);
+        List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty,timeSpaceForm);
         //peopleOrientations.toString();
 //        for( PeopleOrientation peopleOrientation : peopleOrientations){
 //            System.out.println(peopleOrientation.getName() + " : ");
@@ -149,33 +123,43 @@ public class MainController {
 //                System.out.println(orientation.toString());
 //            }
 //        }
-        String url = "track1";
+        String url = "track";
         String data = "";
         String places = "";
         String time = "";
+        PeopleOrientation now = null;
         for(PeopleOrientation peopleOrientation: peopleOrientations){
             if(peopleOrientation.getName().compareTo(name) == 0){
                 data += "?" + DataSourceUtil.locationsFormatToString(peopleOrientation.getOrientations());
                 places += "?" + DataSourceUtil.placeFormatToString(peopleOrientation.getOrientations());
                 time += "?" + DataSourceUtil.timeFormatToString(peopleOrientation.getOrientations());
+                now = peopleOrientation;
             }
         }
         ArrayList<Trace> traces = new ArrayList<>();
-        Trace trace = new Trace(name,data,"green",places,time);
-
+        Trace trace = new Trace(name,data,MapColor.randomColor(),places,time);
         traces.add(trace);
+
+        //todo
+        //Map<String,PersonStatus> scores = AnalysisUtil.analyzeSingle(now);
+
+        //------------------------暂时-----------------
+        Map<String,PersonStatus> scores = new HashMap<>();//Util.getScore(peopleOrientations);
+        scores.put("张乾",new PersonStatus("张乾",0.87,"居家").fillColor());
+        //----------------------------------------------
+
         ModelAndView view = new ModelAndView(url);
         view.addObject("data",traces);
+        view.addObject("scores",scores);
         return view;
     }
 
     @RequestMapping("previewMap")
-    private ModelAndView previewMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
+    private ModelAndView previewMap(HttpSession httpSession, HttpServletResponse httpServletResponse,TimeSpaceForm timeSpaceForm){
         MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
-        TimeSpaceForm timeSpaceForm = (TimeSpaceForm) httpSession.getAttribute("timeSpaceForm");
-        //System.out.println(myDataSourceProperty.toString());
-        //System.out.println(timeSpaceForm.getUniqueName());
-        List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty);
+        httpSession.setAttribute("timeSpaceForm", timeSpaceForm);
+
+        List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty,timeSpaceForm);
 
         for( PeopleOrientation peopleOrientation : peopleOrientations){
             System.out.println(peopleOrientation.getName() + " : ");
@@ -184,7 +168,7 @@ public class MainController {
             }
         }
 
-        String url = "track1";
+        String url = "track";
         ArrayList<Trace> traces = new ArrayList<>();
         for(PeopleOrientation peopleOrientation: peopleOrientations){
             String name = peopleOrientation.getName();
@@ -198,8 +182,21 @@ public class MainController {
 
         }
 
+        //todo
+        //Map<String,PersonStatus> scores = AnalysisUtil.analyze(peopleOrientations);
+
+
+        //------------------------暂时-----------------
+        Map<String,PersonStatus> scores = new HashMap<>();//Util.getScore(peopleOrientations);
+        scores.put("张乾",new PersonStatus("张乾",0.57,"居家").fillColor());
+        scores.put("李霄云",new PersonStatus("李霄云",0.98,"出差达人").fillColor());
+        scores.put("刘龙",new PersonStatus("刘龙",0.3,"旅游达人").fillColor());
+        scores.put("秦骏",new PersonStatus("秦骏",0.1,"旅游狂魔").fillColor());
+        //----------------------------------------------
+
         ModelAndView view = new ModelAndView(url);
         view.addObject("data",traces);
+        view.addObject("scores",scores);
         return view;
     }
 

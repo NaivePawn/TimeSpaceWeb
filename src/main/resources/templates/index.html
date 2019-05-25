@@ -96,25 +96,34 @@
     <br/>
     <br/>
     <form class="form-inline " name = "timeSpaceForm" >
-        <div class="form-group col-md-3">
+        <div class="form-group ">
             <label >人名字段</label>
             <select class="form-control" name="nameColumn">
                 <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value ="${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.nameColumn==columnName}"></option>
             </select>
         </div>
-        <div class="form-group col-md-3"  >
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-group "  >
             <label >时间字段</label>
             <select class="form-control" name="timeColumn">
                 <option th:each="columnName:${session.previewColumn}" th:text="${columnName} " th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.timeColumn==columnName}"></option>
             </select>
         </div>
-        <div class="form-group col-md-3">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-group ">
             <label >地点字段</label>
             <select class="form-control" name="spaceColumn">
                 <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.spaceColumn==columnName}"></option>
             </select>
         </div>
-
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-group ">
+            <label >常居地字段</label>
+            <select class="form-control" name="frequentPlaceColumn">
+                <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.frequentPlaceColumn==columnName}"></option>
+            </select>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button type="button" class="btn btn-default " onclick="getUniqueName()">筛选</button>
         <button type="button" class="btn btn-default " onclick="previewMap()">综合轨迹图</button>
 

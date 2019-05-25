@@ -10,15 +10,17 @@ public class TimeSpaceForm {
     private String timeColumn;
     private String spaceColumn;
     private String uniqueName;
+    private String frequentPlaceColumn;
 
     public TimeSpaceForm() {
     }
 
-    public TimeSpaceForm(String nameColumn, String timeColumn, String spaceColumn, String uniqueName) {
+    public TimeSpaceForm(String nameColumn, String timeColumn, String spaceColumn, String uniqueName, String frequentPlaceColumn) {
         this.nameColumn = nameColumn;
         this.timeColumn = timeColumn;
         this.spaceColumn = spaceColumn;
         this.uniqueName = uniqueName;
+        this.frequentPlaceColumn = frequentPlaceColumn;
     }
 
     public String getNameColumn() {
@@ -53,6 +55,14 @@ public class TimeSpaceForm {
         this.uniqueName = uniqueName;
     }
 
+    public String getFrequentPlaceColumn() {
+        return frequentPlaceColumn;
+    }
+
+    public void setFrequentPlaceColumn(String frequentPlaceColumn) {
+        this.frequentPlaceColumn = frequentPlaceColumn;
+    }
+
     @Override
     public String toString() {
         return "TimeSpaceForm{" +
@@ -60,6 +70,7 @@ public class TimeSpaceForm {
                 ", timeColumn='" + timeColumn + '\'' +
                 ", spaceColumn='" + spaceColumn + '\'' +
                 ", uniqueName='" + uniqueName + '\'' +
+                ", frequentPlaceColumn='" + frequentPlaceColumn + '\'' +
                 '}';
     }
 }

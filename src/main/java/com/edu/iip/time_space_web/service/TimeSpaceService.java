@@ -3,6 +3,7 @@ package com.edu.iip.time_space_web.service;
 import com.edu.iip.time_space_web.model.MyDataSourceProperty;
 import com.edu.iip.time_space_web.model.Orientation;
 import com.edu.iip.time_space_web.model.PeopleOrientation;
+import com.edu.iip.time_space_web.model.TimeSpaceForm;
 import com.edu.iip.time_space_web.util.DataSourceUtil;
 import com.sun.javafx.binding.StringFormatter;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class TimeSpaceService {
         }
     }
 
-    public static List<PeopleOrientation> getPeopleOrientations(MyDataSourceProperty myDataSourceProperty){
+    public static List<PeopleOrientation> getPeopleOrientations(MyDataSourceProperty myDataSourceProperty, TimeSpaceForm timeSpaceForm){
         Connection conn = null;
         Statement statement = null;
         try {
@@ -41,9 +42,9 @@ public class TimeSpaceService {
                 resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName());
             Map<String, List<Orientation> > hashMapPeopleOrientations = new HashMap<>();
             while (resultSet.next()) {
-                String name = resultSet.getString(2);
-                String timeStr = resultSet.getString(3);
-                String place = resultSet.getString(4);
+                String name = resultSet.getString(timeSpaceForm.getNameColumn());
+                String timeStr = resultSet.getString(timeSpaceForm.getTimeColumn());
+                String place = resultSet.getString(timeSpaceForm.getSpaceColumn());
                 Orientation orientation = new Orientation(place, strToDate(timeStr));
                 if(hashMapPeopleOrientations.containsKey(name) == false) hashMapPeopleOrientations.put(name, new ArrayList<>());
                 hashMapPeopleOrientations.get(name).add(orientation);

@@ -33,4 +33,33 @@ public class MapColor {
         return "#"+r+g+b;
     }
 
+    public static String getColorByBaiFenBi(double per) {
+        //var 百分之一 = (单色值范围) / 50;  单颜色的变化范围只在50%之内
+        int bili = (int) Math.round(per * 100);
+        double one = (255 + 255) / 100;
+        double r = 0;
+        double g = 0;
+        double b = 0;
+        if (bili < 50) {
+            // 比例小于50的时候红色是越来越多的,直到红色为255时(红+绿)变为黄色.
+            r = one * bili;
+            g = 255;
+        }
+        if (bili >= 50) {
+            // 比例大于50的时候绿色是越来越少的,直到0 变为纯红
+            g = 255 - ((bili - 50) * one);
+            r = 255;
+        }
+
+        String rs = Integer.toHexString((int) r).toUpperCase();
+        String gs = Integer.toHexString((int) g).toUpperCase();
+        String bs = Integer.toHexString((int) b).toUpperCase();
+
+        rs = rs.length() == 1 ? "0" + rs : rs;
+        gs = gs.length() == 1 ? "0" + gs : gs;
+        bs = bs.length() == 1 ? "0" + bs : bs;
+
+        return "#" + rs + gs + bs;
+    }
+
 }

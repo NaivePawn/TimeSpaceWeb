@@ -15,7 +15,7 @@ public class DistanceUtil {
 	{
 	   String add1 = "清华大学";
 	   String add2 = "宁波市北仑中学";
-//	   String add = "ƽ�������򱱼ִ�����·61��,�����к����������,�̺����Ļ�·���Σ���Դ����Ժ���ڣ�";
+
 	   DistanceUtil gb = new DistanceUtil();
 	   double[] loc1 = gb.getLatitude(add1);
 	   double[] loc2 = gb.getLatitude(add2);

@@ -7,11 +7,24 @@
 	<title>Track Presentation</title>
 	<style type="text/css">  
 		html{height:100%}  
-		body{height:100%;margin:0px;padding:0px}  
-		#container{height:100%;margin: 20px;}  
-	</style>  
-	<script language="JavaScript" src="http://api.map.baidu.com/api?v=3.0&amp;ak=YWdGplhYjUGQ3GtpKNeuTM2S;"></script>
-    <a href="index1.html" class="button">返回</a>
+		body{height:110%;margin:0px;padding:0px}
+		#container{height:100%;margin: 0px;width: 100%}
+	</style>
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}"/>
+    <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script language="JavaScript" src="http://api.map.baidu.com/api?v=1.5&amp;ak=YWdGplhYjUGQ3GtpKNeuTM2S;"></script>
+
+    <div >
+        <h2>时空分析组件</h2>
+        <!--<button type="button" class="btn btn-default " onclick=" window.location.href='/'">重置</button>-->
+        <!---->
+
+    </div>
+
+    <div class="page-header">
+        <h3>地图显示</h3>
+    </div>
 </head>
 
 <body>
@@ -223,7 +236,7 @@
 
     map.centerAndZoom(new BMap.Point(103.388611,35.563611), 5); //初始显示中国。
 
-    map.enableScrollWheelZoom();//滚轮放大缩小
+    //map.enableScrollWheelZoom();//滚轮放大缩小
     var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
     var top_left_navigation = new BMap.NavigationControl();
     map.addControl(top_left_control);
@@ -239,8 +252,31 @@
 
 
 </script>
+<br/>
+<h3>轨迹分析</h3>
+<br/>
+<table class="table table-hover" align="center">
+    <thead>
+    <tr >
+        <th>实体</th>
+        <th>旅行标签</th>
+        <th>预警状态</th>
+        <th>预警颜色</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item,userStat:${scores}">
+        <td th:text="${userStat.current.key}"></td>
+        <td th:text="${userStat.current.value.label}"></td>
+        <td th:text="${userStat.current.value.state}"></td>
+        <td align="center" style="color:#ffffff" th:bgcolor="${userStat.current.value.color}" width="10%">&nbsp;</td>
 
-
+    </tr>
+    </tbody>
+</table>
+<div th:align="right">
+<button  class="btn btn-default " onclick="javascript:window.location.href='index1.html'">返回</button>
+</div>
 </body>
 
 </html>
