@@ -38,6 +38,10 @@ public class PeopleOrientation {
         sort();
     }
 
+    public Orientation getFrequentOrientation(){ return frequentOrientation; }
+
+    public void setFrequentOrientation(Orientation frequentOrientation) { this.frequentOrientation = frequentOrientation; }
+
     public double allDistance(){
         sort();
         double dis = 0.0;
@@ -71,4 +75,5 @@ public class PeopleOrientation {
     private String id;
     private String name;
     private List<Orientation> orientations = new ArrayList<>();
+    private Orientation frequentOrientation;
 }

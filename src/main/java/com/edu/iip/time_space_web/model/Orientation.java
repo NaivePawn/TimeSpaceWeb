@@ -62,6 +62,15 @@ public class Orientation implements Comparable<Orientation>{
     private double lng;
     private double lat;
 
+    public static double calDistance(Orientation ori1, Orientation ori2){
+        return DistanceUtil.calculateDistance(ori1.lng, ori1.lat, ori2.lng, ori2.lat);
+    }
+
+    public static double calThroughDays(Orientation ori1, Orientation ori2){ // 默认ori2的时间在ori1的后面
+        long through_milliseconds = ori2.getDate().getTime() - ori1.getDate().getTime();
+        return through_milliseconds / 1000.0 / 3600 / 24;
+    }
+
     @Override
     public int compareTo(Orientation obj){
         return date.compareTo(obj.date);
