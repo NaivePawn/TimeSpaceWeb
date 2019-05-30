@@ -141,11 +141,11 @@ public class MainController {
         traces.add(trace);
 
         //todo
-        //Map<String,PersonStatus> scores = AnalysisUtil.analyzeSingle(now);
+        Map<String,PersonStatus> scores = AnalysisUtil.analyzeSingle(now);
 
         //------------------------暂时-----------------
-        Map<String,PersonStatus> scores = new HashMap<>();//Util.getScore(peopleOrientations);
-        scores.put("张乾",new PersonStatus("张乾",0.87,"居家").fillColor());
+//        Map<String,PersonStatus> scores = new HashMap<>();//Util.getScore(peopleOrientations);
+//        scores.put("张乾",new PersonStatus("张乾",0.87,"居家").fillColor());
         //----------------------------------------------
 
         ModelAndView view = new ModelAndView(url);
@@ -183,15 +183,15 @@ public class MainController {
         }
 
         //todo
-        //Map<String,PersonStatus> scores = AnalysisUtil.analyze(peopleOrientations);
+        Map<String,PersonStatus> scores = AnalysisUtil.analyze(peopleOrientations);
 
 
         //------------------------暂时-----------------
-        Map<String,PersonStatus> scores = new HashMap<>();//Util.getScore(peopleOrientations);
-        scores.put("张乾",new PersonStatus("张乾",0.57,"居家").fillColor());
-        scores.put("李霄云",new PersonStatus("李霄云",0.98,"出差达人").fillColor());
-        scores.put("刘龙",new PersonStatus("刘龙",0.3,"旅游达人").fillColor());
-        scores.put("秦骏",new PersonStatus("秦骏",0.1,"旅游狂魔").fillColor());
+//        Map<String,PersonStatus> scores = new HashMap<>();//Util.getScore(peopleOrientations);
+//        scores.put("张乾",new PersonStatus("张乾",0.57,"居家").fillColor());
+//        scores.put("李霄云",new PersonStatus("李霄云",0.98,"出差达人").fillColor());
+//        scores.put("刘龙",new PersonStatus("刘龙",0.3,"旅游达人").fillColor());
+//        scores.put("秦骏",new PersonStatus("秦骏",0.1,"旅游狂魔").fillColor());
         //----------------------------------------------
 
         ModelAndView view = new ModelAndView(url);

@@ -41,12 +41,18 @@ public class TimeSpaceService {
             else
                 resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName());
             Map<String, List<Orientation> > hashMapPeopleOrientations = new HashMap<>();
+            Map<String, String> frequentPlace = new HashMap<>();
             while (resultSet.next()) {
                 String name = resultSet.getString(timeSpaceForm.getNameColumn());
                 String timeStr = resultSet.getString(timeSpaceForm.getTimeColumn());
                 String place = resultSet.getString(timeSpaceForm.getSpaceColumn());
+                String fre = resultSet.getString(timeSpaceForm.getFrequentPlaceColumn());
                 Orientation orientation = new Orientation(place, strToDate(timeStr));
-                if(hashMapPeopleOrientations.containsKey(name) == false) hashMapPeopleOrientations.put(name, new ArrayList<>());
+                if(hashMapPeopleOrientations.containsKey(name) == false)
+                {
+                    hashMapPeopleOrientations.put(name, new ArrayList<>());
+                    frequentPlace.put(name,fre);
+                }
                 hashMapPeopleOrientations.get(name).add(orientation);
             }
             List<PeopleOrientation> peopleOrientations = new ArrayList<>();
@@ -54,7 +60,10 @@ public class TimeSpaceService {
                 PeopleOrientation peopleOrientation = new PeopleOrientation();
                 peopleOrientation.setName(name);
                 peopleOrientation.setOrientations(hashMapPeopleOrientations.get(name));
+                Orientation src = new Orientation(frequentPlace.get(name),peopleOrientation.getOrientations().get(0).getDate());
+                peopleOrientation.setFrequentOrientation(src);
                 peopleOrientations.add(peopleOrientation);
+
             }
 
             return peopleOrientations;

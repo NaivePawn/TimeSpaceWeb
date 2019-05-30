@@ -57,11 +57,13 @@ public class CycleTrack {
 
     public double calExceptionState(){
         double ret = 0.0 ;
-        ret = Math.max(aveDistanceException(), ret);
-        ret = Math.max(maxTimeException(), ret);
-        ret = Math.max(nextDistanceException(), ret);
-        ret = Math.max(maxOutPlaceCount(), ret);
-        return ret;
+        return (aveDistanceException() + maxTimeException() + nextDistanceException() + maxOutPlaceCount())/4.0;
+//        ret = Math.max(aveDistanceException(), ret);
+//        ret = Math.max(maxTimeException(), ret);
+//        ret = Math.max(nextDistanceException(), ret);
+//        ret = Math.max(maxOutPlaceCount(), ret);
+
+//        return ret;
 //        double state = 1.0;
 //        return state * aveDistanceException() * maxTimeException() * nextDistanceException() * maxOutPlaceCount();
     }
