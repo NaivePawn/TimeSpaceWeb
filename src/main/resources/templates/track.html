@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head>  
+<head>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 	<title>Track Presentation</title>
@@ -15,11 +15,13 @@
     <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<script language="JavaScript" src="http://api.map.baidu.com/api?v=1.5&amp;ak=YWdGplhYjUGQ3GtpKNeuTM2S;"></script>
 
+    <style>
+        h2,h3{font-size: 14px;}
+    </style>
     <div >
         <h2>时空分析组件</h2>
         <!--<button type="button" class="btn btn-default " onclick=" window.location.href='/'">重置</button>-->
         <!---->
-
     </div>
 
     <div class="page-header">
@@ -279,7 +281,7 @@
 <br/>
 <h3>轨迹分析</h3>
 <br/>
-<table class="table table-hover" align="center">
+<table class="table table-bordered table-striped" align="center">
     <thead>
     <tr >
         <th>实体</th>
@@ -299,7 +301,7 @@
     </tbody>
 </table>
 <div th:align="right">
-<button  class="btn btn-default " onclick="javascript:window.location.href='index1.html'">返回</button>
+<button  class="btn btn-info " onclick="javascript:window.location.href='index1.html'">返回</button>
 </div>
 </body>
 

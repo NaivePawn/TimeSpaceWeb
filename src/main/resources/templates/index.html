@@ -37,7 +37,7 @@
     <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <style>
     h3{font-size: 14px;}
-    .control-label{font-size: 14px;font-weight: normal;}
+    .control-label{width: auto;font-size: 14px;font-weight: normal;text-align: right;padding-top: 7px;padding-right: 0px;}
     .mylabel{font-size: 14px;font-weight: normal;}
     .col-md-3{margin-top: 20px;margin-right: 20px;width: auto;padding-left: 0px;}
     .panel-heading{padding-left: 0px;}
@@ -53,36 +53,37 @@
                 <header class="panel-heading">时空分析组件数据源配置</header>
                 <div class="panel-body">
                     <div class="container">
-                        <div class="row" style="width: 70%; margin-left: 15%">
-                            <form class="form-horizontal " th:action="@{/preview} ">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><em style="color: #FF6C60">*</em>数据库地址</label>
+                        <div class="row" style="width: 50%; margin-left: 25%;">
+                            <form class="form-inline " th:action="@{/connectDatabase}">
+                                <div class="form-group" style="width: 70%;margin-left: 0px;">
+                                    <label class="col-sm-3 control-label">基础库</label>
                                     <div class="col-sm-6">
-                                        <input  type="text" class="form-control" id="dataSourceUrl" name="dataSourceUrl" placeholder="数据库" th:value="${session.dataSource == null}? '': ${session.dataSource.dataSourceUrl}" />
+                                        <select class="form-control" name="dataSourceUrl">
+                                            <option value="">请选择数据库</option>
+                                            <option value="population" th:selected="${session.database}=='population'">人口库</option>
+                                            <option value="legalperson" th:selected="${session.database}=='legalperson'">法人库</option>
+                                            <option value="certificate" th:selected="${session.database}=='certificate'">证照库</option>
+                                            <option value="credit" th:selected="${session.database}=='credit'">信用库</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="form-group" >
-                                    <label class="col-sm-3 control-label"><em style="color: #FF6C60">*</em>数据库表名</label>
+                                <div class="form-group" style="width: auto;margin-right: 0px;margin-top: 0px;">
+                                    <button type="submit" class="btn btn-info">连接</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="row" style="width: 50%; margin-left: 25%;margin-top: 10px;">
+                            <form class="form-inline " th:action="@{/preview} ">
+                                <div class="form-group" style="width: 70%;margin-left: 0px;">
+                                    <label class="col-sm-3 control-label">数据表</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="tableName" name="tableName" placeholder="表名"
-                                               th:value="${session.dataSource == null}? '': ${session.dataSource.tableName}"/>
+                                        <select class="form-control" name="tableName">
+                                            <option value="">请选择表名</option>
+                                            <option th:each="tableName:${session.tableNames}" th:text="${tableName}" th:value = "${tableName}" th:selected="${session.database==null?false:session.tableName==tableName}"></option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><em style="color: #FF6C60">*</em>用户名</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="userName" name="userName" placeholder="用户名"
-                                               th:value="${session.dataSource == null}? '': ${session.dataSource.userName}"/>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><em style="color: #FF6C60">*</em>密码</label>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="密码"
-                                               th:value="${session.dataSource == null}? '': ${session.dataSource.password}"/>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="margin-left: 65%;">
+                                <div class="form-group" style="width: auto;margin-right: 0px;margin-top: 0px;">
                                     <button type="submit" class="btn btn-info" >预览</button>
                                 </div>
                             </form>
@@ -98,7 +99,7 @@
                             <table class="table table-bordered table-striped">
                                 <thead>
                                 <tr role="row">
-                                    <th th:each="columnName:${session.previewColumn}" th:text="${columnName}">字段</th>
+                                    <th th:each="tableName:${session.previewColumn}" th:text="${tableName}">字段</th>
                                 </tr>
                                 </thead>
                                 <tbody>

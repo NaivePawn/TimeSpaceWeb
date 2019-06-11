@@ -2,6 +2,7 @@ package com.edu.iip.time_space_web.service;
 
 import com.edu.iip.time_space_web.model.MyDataSourceProperty;
 import com.edu.iip.time_space_web.model.PreviewData;
+import com.edu.iip.time_space_web.model.PreviewTable;
 import com.edu.iip.time_space_web.model.TimeSpaceForm;
 import com.edu.iip.time_space_web.util.DataSourceUtil;
 import com.sun.javafx.binding.StringFormatter;
@@ -32,7 +33,6 @@ public class MainService {
             if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE")) {
                 resultSet = statement.executeQuery("SELECT * FROM " + "\"" + myDataSourceProperty.getTableName() + "\"" + " where rownum<="+previewNumber);
             }
-
             else
                 resultSet = statement.executeQuery("SELECT * FROM " +myDataSourceProperty.getTableName()+" limit "+previewNumber);
 
@@ -63,6 +63,36 @@ public class MainService {
         return previewData;
     }
 
+    public PreviewTable getTables(MyDataSourceProperty myDataSourceProperty){
+        PreviewTable previewTable = new PreviewTable();
+        try{
+            DataSource dataSource = DataSourceUtil.createDataSource(myDataSourceProperty);
+            Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = null;
+            if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE")) {
+                resultSet = statement.executeQuery("select table_name from user_tables");
+            }
+            else
+                resultSet = statement.executeQuery("show tables");
+
+            List<Object> tables = new ArrayList<>();
+            while (resultSet.next()){
+                tables.add(resultSet.getObject(1));
+            }
+            previewTable.setTableName(tables);
+            statement.close();
+            connection.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
+
+        }
+        return previewTable;
+    }
+
     public List<Object> getUniqueName(MyDataSourceProperty myDataSourceProperty, TimeSpaceForm timeSpaceForm){
         PreviewData previewData;
         List<Object> res = new ArrayList<>();
@@ -82,7 +112,6 @@ public class MainService {
             while (resultSet.next()) {
                 res.add(resultSet.getObject(1));
             }
-
 
         }catch (Exception e){
             e.printStackTrace();
