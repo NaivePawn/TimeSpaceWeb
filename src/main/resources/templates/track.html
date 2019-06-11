@@ -7,7 +7,7 @@
 	<title>Track Presentation</title>
 	<style type="text/css">  
 		html{height:100%}  
-		body{height:110%;margin:0px;padding:0px}
+		body{height:110%;margin:0px;padding-left: 100px;padding-right: 100px;}
 		#container{height:100%;margin: 0px;width: 100%}
 	</style>
     <link rel="stylesheet" th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}"/>
@@ -135,10 +135,10 @@
         newLinePoints = points.slice(len-2, len);//最后两个点用来画线。
 
         addLine(newLinePoints,trace.color);//增加轨迹线
-        setZoom(bPoints);
+//      setZoom(bPoints);
 //        <![CDATA[
         if (id+1 < positions.length){
-            setTimeout(function(){addRoute(id+1,trace)}, 1000);
+            setTimeout(function(){addRoute(id+1,trace)}, 0);
         }else{
             next();
         }
@@ -223,10 +223,32 @@
             bPoints = [];//百度化坐标数组。用于更新显示范围。
             setTimeout(function () {
                 addRoute(0,d);
-            }, 1000);//动态生成新的点。
-
+            }, 0);//动态生成新的点。
             j = j+1;
         }
+    }
+
+    //获取所有坐标点的中心点
+    function getCenterPosition(arr) {
+        var maxlng = 0, maxlat = 0;
+        var minlng = 200, minlat = 200;
+  //      <![CDATA[
+        for (var row = 0;row<arr.length;row++){
+            if (arr[row][0] < minlng) {
+                minlng = arr[row][0];
+            }
+            if (arr[row][0] > maxlng) {
+                maxlng = arr[row][0];
+            }
+            if (arr[row][1] < minlat) {
+                minlat = arr[row][1];
+            }
+            if (arr[row][1] > maxlat) {
+                maxlat = arr[row][1];
+            }
+        }
+  //      ]]>
+        return [(maxlng+minlng)/2,(maxlat+minlat)/2];
     }
 
 
@@ -234,7 +256,7 @@
     //地图操作开始
     var map = new BMap.Map("container");
 
-    map.centerAndZoom(new BMap.Point(103.388611,35.563611), 5); //初始显示中国。
+    map.centerAndZoom(new BMap.Point(103.388611,35.563611), 7); //初始显示中国。
 
     //map.enableScrollWheelZoom();//滚轮放大缩小
     var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
@@ -249,6 +271,8 @@
     var bPoints = [];//百度化坐标数组。用于更新显示范围。
     var markerMap = new Map();
     next();
+    var centPos = getCenterPosition(positions);
+    map.centerAndZoom(new BMap.Point(centPos[0],centPos[1]), 7);
 
 
 </script>
