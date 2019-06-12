@@ -2,18 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
-	<title>Track Presentation</title>
-	<style type="text/css">  
-		html{height:100%}  
-		body{height:110%;margin:0px;padding-left: 100px;padding-right: 100px;}
-		#container{height:100%;margin: 0px;width: 100%}
-	</style>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Track Presentation</title>
+    <style type="text/css">
+        html{height:100%}
+        body{height:110%;margin:0px;padding-left: 100px;padding-right: 100px;}
+        #container{height:100%;margin: 0px;width: 100%}
+    </style>
     <link rel="stylesheet" th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}"/>
     <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<script language="JavaScript" src="http://api.map.baidu.com/api?v=1.5&amp;ak=YWdGplhYjUGQ3GtpKNeuTM2S;"></script>
+    <script language="JavaScript" src="http://api.map.baidu.com/api?v=1.5&amp;ak=YWdGplhYjUGQ3GtpKNeuTM2S;"></script>
 
     <style>
         h2,h3{font-size: 14px;}
@@ -33,18 +33,13 @@
 <div id="container"></div>
 
 <script language="JavaScript" th:inline="javascript">
-
     /* 用途: 接收地直栏参数 取id=1 根据ID的值 */
-
     // 实时轨迹demo。
     // 实际运用的话可能ajax实时读取后台数据，加载到地图上。
-
-
     // 获取随机数
     function getRandom(n){
         return Math.floor(Math.random()*n+1)
     }
-
     //在轨迹点上创建图标，并添加点击事件，显示轨迹点信息。points,数组。
     function addMarker(points,places,times,label){
         var pointsLen = points.length;
@@ -54,7 +49,6 @@
         var myIcon = new BMap.Icon("track.ico", new BMap.Size(5, 5), {
             offset: new BMap.Size(25, 25)
         });
-
         // 创建标注对象并添加到地图
 //        <![CDATA[
         for(var i = 0;i<pointsLen;i++){
@@ -62,21 +56,16 @@
             var uuid = points[i].lng + "iip" + points[i].lat;
             var marker = new BMap.Marker(point, {icon: myIcon});
             var title =  label+"<br>"+places[i]+" "+times[i];
-
             if(uuid in markerMap) {
                 marker = (markerMap[uuid]);
                 title = marker.getTitle() + "<br><br>" + label+"<br>"+places[i]+" "+times[i];
             }
-
             //var title = marker.getTitle();
             //console.log(title);
             marker.setTitle(title);
             marker.setLabel("laka");
             console.log(title);
-
             map.addOverlay(marker);
-
-
             //添加信息窗口代码，可按情况进行修改添加
             var sContent =
                 '<ul style="margin:0 0 2px 0;padding:0.1em 0">'
@@ -90,14 +79,11 @@
                 this.openInfoWindow(infoWindow);
             });
             markerMap[uuid] = marker;
-
         }
 //        ]]>
     }
-
     //添加线
     function addLine(points,color){
-
         var linePoints = [],pointsLen = points.length,i,polyline;
         if(pointsLen==0){
             return;
@@ -108,12 +94,9 @@
             linePoints.push(new BMap.Point(points[i].lng,points[i].lat));
         }
 //        ]]>
-
         polyline = new BMap.Polyline(linePoints, {strokeColor:color, strokeWeight:5, strokeOpacity:1});   //创建折线
         map.addOverlay(polyline);   //增加折线
     }
-
-
     // 根据传入的点添加线路，功能和dynamicLine类似，不过前者是添加随机产生的点
     function addRoute(id,trace){
         console.log('debug addRoute id: '+id)
@@ -126,7 +109,6 @@
         var makerPlaces = [];
         var makerTimes = [];
         var len;
-
         makerPoints.push(point);
         makerPlaces.push(place);
         makerTimes.push(time)
@@ -135,7 +117,6 @@
         bPoints.push(new BMap.Point(lng,lat));
         len = points.length;
         newLinePoints = points.slice(len-2, len);//最后两个点用来画线。
-
         addLine(newLinePoints,trace.color);//增加轨迹线
 //      setZoom(bPoints);
 //        <![CDATA[
@@ -146,7 +127,6 @@
         }
 //        ]]>
     }
-
     //根据点信息实时更新地图显示范围，让轨迹完整显示。设置新的中心点和显示级别.
     //更新。设置不是每次增加点都重新设置显示范围。因为有可能会想放大了看。
     function setZoom(bPoints){
@@ -157,7 +137,6 @@
             map.centerAndZoom(centerPoint,mapZoom);
             map.oldView = JSON.stringify(view);
         }
-
     }
     // 解析网址，获取到？号后面带着的经纬度信息
     // format: lng1,lat1&amp;lng2,lat2&amp;lng3,lat3...
@@ -186,13 +165,11 @@
         offset=placesinfo.indexOf("?");//设置参数字符串开始的位置
         //alert(offset);
         var info=placesinfo.substr(offset+1,len);//取出参数字符串 这里会获得类似“id=1”这样的字符串
-
         var places_list = info.split("&amp;");
-
         places = [];
         places_list.forEach(pl=>{
             places.push(pl);
-        })
+    })
         return places;
     }
 
@@ -202,11 +179,9 @@
         offset=timeinfo.indexOf("?");//设置参数字符串开始的位置
         //alert(offset);
         var info=timeinfo.substr(offset+1,len);//取出参数字符串 这里会获得类似“id=1”这样的字符串
-
         var places_list = info.split("&amp;");
         times = [];
         places_list.forEach(pl=>{
-
             times.push(pl);
     })
         return times;
@@ -220,7 +195,6 @@
             positions = parseUrl(urlinfo);//从html参数得到的解析值
             places = parsePlace(d.places);
             times = parseTime(d.time);
-
             points = [];//原始点信息数组
             bPoints = [];//百度化坐标数组。用于更新显示范围。
             setTimeout(function () {
@@ -229,12 +203,11 @@
             j = j+1;
         }
     }
-
     //获取所有坐标点的中心点
     function getCenterPosition(arr) {
         var maxlng = 0, maxlat = 0;
         var minlng = 200, minlat = 200;
-  //      <![CDATA[
+        //      <![CDATA[
         for (var row = 0;row<arr.length;row++){
             if (arr[row][0] < minlng) {
                 minlng = arr[row][0];
@@ -249,17 +222,12 @@
                 maxlat = arr[row][1];
             }
         }
-  //      ]]>
+        //      ]]>
         return [(maxlng+minlng)/2,(maxlat+minlat)/2];
     }
-
-
-
     //地图操作开始
     var map = new BMap.Map("container");
-
     map.centerAndZoom(new BMap.Point(103.388611,35.563611), 7); //初始显示中国。
-
     //map.enableScrollWheelZoom();//滚轮放大缩小
     var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
     var top_left_navigation = new BMap.NavigationControl();
@@ -274,10 +242,9 @@
     var markerMap = new Map();
     next();
     var centPos = getCenterPosition(positions);
-    map.centerAndZoom(new BMap.Point(centPos[0],centPos[1]), 7);
-
-
+    map.centerAndZoom(new BMap.Point(centPos[0],centPos[1]), 9);
 </script>
+
 <br/>
 <h3>轨迹分析</h3>
 <br/>
@@ -300,9 +267,89 @@
     </tr>
     </tbody>
 </table>
-<div th:align="right">
-<button  class="btn btn-info " onclick="javascript:window.location.href='index1.html'">返回</button>
+
+<div class="form-inline" th:if="${session.scores != null}">
+    <br/>
+    <h3>聚类分析</h3>
+    <br/>
+    <form class="form-inline " th:action="@{/cluster} ">
+        <div class="form-group col-md-3">
+            <label class="mylabel">类数选择</label>
+            <select class="form-control" name="clusterNum">
+                <option value="">请选择</option>
+                <option value = "1" th:selected="${session.clusterNum==1}">1</option>
+                <option value = "2" th:selected="${session.clusterNum==2}">2</option>
+                <option value = "3" th:selected="${session.clusterNum==3}">3</option>
+                <option value = "4" th:selected="${session.clusterNum==4}">4</option>
+                <option value = "5" th:selected="${session.clusterNum==5}">5</option>
+                <option value = "6" th:selected="${session.clusterNum==6}">6</option>
+                <option value = "7" th:selected="${session.clusterNum==7}">7</option>
+                <option value = "8" th:selected="${session.clusterNum==8}">8</option>
+                <option value = "9" th:selected="${session.clusterNum==9}">9</option>
+                <option value = "10" th:selected="${session.clusterNum==10}">10</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <button type="submit" class="btn btn-info ">聚类</button>
+        </div>
+    </form>
+    <br/>
+    <br/>
+
+    <form class="form-inline " th:action="@{/label} ">
+        <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null} and ${session.labeled == null}">
+            <thead>
+            <tr>
+                <th>ClusterID</th>
+                <th>实体</th>
+                <th>标签</th>
+            </tr>
+            </thead>
+            <tbody th:each="item,userStat:${classAndNames}">
+            <tr>
+                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
+                <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
+                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}"><input type="text" class="form-control" th:id="'label'+${userStat.current.key}" th:name="'label'+${userStat.current.key}"/></td>
+            </tr>
+
+            <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
+                <td th:text="${userStat.current.value.nameList.get(i)}"></td>
+            </tr>
+            </tbody>
+            <tr>
+                <td></td>
+                <td></td>>
+                <td><button type="submit" class="btn btn-info">打上标签</button></td>
+            </tr>
+        </table>
+    </form>
+
+    <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null and session.labeled==true}">
+        <thead>
+        <tr>
+            <th>ClusterID</th>
+            <th>实体</th>
+            <th>标签</th>
+        </tr>
+        </thead>
+        <tbody th:each="item,userStat:${classAndNames}">
+        <tr >
+            <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
+            <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
+            <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.value.label}"></td>>
+        </tr>
+        <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
+            <td th:text="${userStat.current.value.nameList.get(i)}"></td>
+        </tr>
+        </tbody>
+    </table>
+
 </div>
+
+<div th:align="center">
+    <button  class="btn btn-info " onclick="javascript:window.location.href='index1.html'">返回</button>
+</div>
+
 </body>
 
 </html>

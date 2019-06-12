@@ -178,5 +178,4 @@ public class MainService {
         }
         return previewData;
     }
-
 }
