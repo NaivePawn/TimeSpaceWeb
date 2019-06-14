@@ -51,12 +51,32 @@ public class MainController {
     @RequestMapping("/preview")
     private String preView(MyDataSourceProperty myDataSource, Model model, HttpSession httpSession){
 
+        String database = (String) httpSession.getAttribute("database");
+        if(database.equals("population")){
+            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/test");
+        } else if (database.equals("legalperson")) {
+            //TODO
+//            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/fusion");
+        }
+        else if (database.equals("certificate")) {
+            //TODO
+        }
+        else if (database.equals("credit")) {
+            //TODO
+        }
+        else{
+            model.addAttribute("msg","数据库配置错误");
+            return "index";
+        }
+        myDataSource.setUserName("root");
+        myDataSource.setPassword("123456");
 
         PreviewData previewData = mainService.preview(myDataSource);
         if(previewData != null) {
             httpSession.setAttribute("previewColumn", previewData.getColumnName());
             httpSession.setAttribute("previewData", previewData.getData());
             httpSession.setAttribute("dataSource",myDataSource);
+            httpSession.setAttribute("tableName", myDataSource.getTableName());
             httpSession.removeAttribute("uniqueNameList");
         }else{
             httpSession.removeAttribute("dataSource");
@@ -67,9 +87,44 @@ public class MainController {
         return "index";
     }
 
+    @RequestMapping("/connectDatabase")
+    private String connectDatabase(MyDataSourceProperty myDataSource, Model model, HttpSession httpSession) {
+
+        httpSession.setAttribute("database", myDataSource.getDataSourceUrl());
+        if(myDataSource.getDataSourceUrl().equals("population")){
+            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/test");
+        } else if (myDataSource.getDataSourceUrl().equals("legalperson")) {
+            //TODO
+//            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/fusion");
+        }
+        else if (myDataSource.getDataSourceUrl().equals("certificate")) {
+            //TODO
+        }
+        else if (myDataSource.getDataSourceUrl().equals("credit")) {
+            //TODO
+        }
+        else{
+            model.addAttribute("msg","数据库配置错误");
+            return "index";
+        }
+        myDataSource.setUserName("root");
+        myDataSource.setPassword("123456");
+
+        PreviewTable previewTable = mainService.getTables(myDataSource);
+        if(previewTable != null){
+            httpSession.setAttribute("tableNames", previewTable.getTableName());
+//            httpSession.setAttribute("dataSource",myDataSource);
+        }
+        else{
+            httpSession.removeAttribute("dataSource");
+            httpSession.removeAttribute("tableNames");
+            model.addAttribute("msg","数据库配置错误");
+        }
+        return "index";
+    }
+
     @RequestMapping("/getUniqueName")
     private String getUniqueName(TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
-
 
         if(httpSession.getAttribute("dataSource") == null){
             return "index";
@@ -107,8 +162,6 @@ public class MainController {
 
         return "index";
     }
-
-
 
     @RequestMapping("previewSingleMap")
     private ModelAndView previewSingleMap(HttpSession httpSession, HttpServletResponse httpServletResponse){
