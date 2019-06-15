@@ -58,7 +58,6 @@ public class MainController {
             myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/timespacedatasource");
         } else if (database.equals("legalperson")) {
             //TODO
-//            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/fusion");
         }
         else if (database.equals("certificate")) {
             //TODO
@@ -93,12 +92,11 @@ public class MainController {
     private String connectDatabase(MyDataSourceProperty myDataSource, Model model, HttpSession httpSession) {
 
         httpSession.setAttribute("database", myDataSource.getDataSourceUrl());
-        System.out.println(myDataSource.getDataSourceUrl());
+//        System.out.println(myDataSource.getDataSourceUrl());
         if(myDataSource.getDataSourceUrl().equals("population")){
             myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/timespacedatasource");
         } else if (myDataSource.getDataSourceUrl().equals("legalperson")) {
             //TODO
-//            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/fusion");
         }
         else if (myDataSource.getDataSourceUrl().equals("certificate")) {
             //TODO
@@ -126,7 +124,7 @@ public class MainController {
         return "index";
     }
 
-    @PostMapping("/getUniqueName")
+    @RequestMapping("/getUniqueName")
     private String getUniqueName(@RequestBody TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
 
         if(httpSession.getAttribute("dataSource") == null){
@@ -135,36 +133,33 @@ public class MainController {
         MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty) httpSession.getAttribute("dataSource");
         httpSession.setAttribute("timeSpaceForm", timeSpaceForm);
         List<Object> res = mainService.getUniqueName(myDataSourceProperty, timeSpaceForm);
-        System.out.println(res);
         httpSession.removeAttribute("previewSingleColumn");
         httpSession.removeAttribute("previewSingleData");
         httpSession.setAttribute("uniqueNameList",res);
 
-        System.out.println(timeSpaceForm);
-
-        return "index";
+        return "index::setting_table";
     }
 
     @RequestMapping("/previewSingle")
-    private String previewSingle(TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
+    private String previewSingle(@RequestBody TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
         if(httpSession.getAttribute("dataSource") == null){
             return "index";
         }
+
         MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
         httpSession.setAttribute("timeSpaceForm", timeSpaceForm);
 
         PreviewData previewData = mainService.previewSingle(myDataSourceProperty,timeSpaceForm);
         if(previewData != null) {
-            System.out.println(previewData.getColumnName());
-            System.out.println(previewData.getData());
             httpSession.setAttribute("previewSingleColumn", previewData.getColumnName());
             httpSession.setAttribute("previewSingleData", previewData.getData());
+
         }else{
             httpSession.removeAttribute("previewSingleColumn");
             httpSession.removeAttribute("previewSingleData");
         }
 
-        return "index";
+        return "index::single_table";
     }
 
     @RequestMapping("previewSingleMap")
@@ -220,12 +215,12 @@ public class MainController {
 
         List<PeopleOrientation> peopleOrientations = TimeSpaceService.getPeopleOrientations(myDataSourceProperty,timeSpaceForm);
 
-        for( PeopleOrientation peopleOrientation : peopleOrientations){
-            System.out.println(peopleOrientation.getName() + " : ");
-            for(Orientation orientation: peopleOrientation.getOrientations()){
-                System.out.println(orientation.toString());
-            }
-        }
+//        for( PeopleOrientation peopleOrientation : peopleOrientations){
+////            System.out.println(peopleOrientation.getName() + " : ");
+//            for(Orientation orientation: peopleOrientation.getOrientations()){
+//                System.out.println(orientation.toString());
+//            }
+//        }
 
         String url = "track";
         ArrayList<Trace> traces = new ArrayList<>();
@@ -263,7 +258,7 @@ public class MainController {
     }
 
     @RequestMapping("/cluster")
-    private ModelAndView cluster(Cluster cluster, HttpSession httpSession){
+    private ModelAndView cluster(@RequestBody Cluster cluster, HttpSession httpSession){
         Map<String, PersonStatus> scores = (Map<String, PersonStatus>) httpSession.getAttribute("scores");
         ArrayList<Trace> traces = (ArrayList<Trace>) httpSession.getAttribute("data");
         int clusterNum = cluster.getClusterNum();
@@ -306,7 +301,7 @@ public class MainController {
         httpSession.setAttribute("data", traces);
         httpSession.removeAttribute("labeled");
 
-        String url = "track";
+        String url = "track::setting_cluster";
         ModelAndView view = new ModelAndView(url);
         view.addObject("data",traces);
         view.addObject("scores",scores);
@@ -315,7 +310,7 @@ public class MainController {
     }
 
     @RequestMapping("/label")
-    private ModelAndView label(Label labels, HttpSession httpSession) {
+    private ModelAndView label(@RequestBody Label labels, HttpSession httpSession) {
         Map<String, PersonStatus> scores = (Map<String, PersonStatus>) httpSession.getAttribute("scores");
         ArrayList<Trace> traces = (ArrayList<Trace>) httpSession.getAttribute("data");
 
@@ -331,8 +326,6 @@ public class MainController {
         labelList.add(labels.getLabel9());
         labelList.add(labels.getLabel10());
 
-        System.out.println(labelList);
-
         Map<Integer, ClusterNameLabel> classAndNames = (Map<Integer, ClusterNameLabel>) httpSession.getAttribute("classAndNames");
 
         for(Integer clusterID : classAndNames.keySet()){
@@ -342,7 +335,7 @@ public class MainController {
         httpSession.setAttribute("classAndNames", classAndNames);
         httpSession.setAttribute("labeled", true);
 
-        String url = "track";
+        String url = "track::setting_cluster";
         ModelAndView view = new ModelAndView(url);
         view.addObject("data",traces);
         view.addObject("scores",scores);

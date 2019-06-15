@@ -43,7 +43,7 @@ public class DistanceUtil {
 			in.close();
 
 			String str = sb.toString();
-			System.out.println(str);
+//			System.out.println(str);
 			if(str != null)
 			{
 				int lngStart = str.indexOf("lng\":");

@@ -143,7 +143,7 @@ public class MainService {
             if(myDataSourceProperty.getDataSourceUrl().contains("oracle")||myDataSourceProperty.getDataSourceUrl().contains("ORACLE"))
                 sqlFormat = "SELECT \"%s\",\"%s\",\"%s\" FROM \"%s\" WHERE \"%s\"='%s' AND rownum<="+previewNumber+" ORDER BY \"%s\"";
             String sql = String.format(sqlFormat,timeSpaceForm.getNameColumn(),timeSpaceForm.getTimeColumn(),timeSpaceForm.getSpaceColumn(),myDataSourceProperty.getTableName(),timeSpaceForm.getNameColumn(),timeSpaceForm.getUniqueName(),timeSpaceForm.getTimeColumn());
-            System.out.println(sql);
+//            System.out.println(sql);
             ResultSet resultSet = statement.executeQuery(sql);
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             int count = resultSetMetaData.getColumnCount();

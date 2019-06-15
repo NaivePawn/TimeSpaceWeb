@@ -34,6 +34,8 @@ public class AnalysisUtil {
 
         label += " ";
         // 计算整个路线的经历总时间
+        if(cycles==null || cycles.size()==0)
+            return label;
         double allDays = Orientation.calThroughDays(cycles.get(0).orientations.get(0),
                 cycles.get(cycles.size()-1).orientations.get(cycles.get(cycles.size()-1).orientations.size()-1));
         if (allDays * 1.0 / cycles.size() < 30) label += frequenceLabels[2];

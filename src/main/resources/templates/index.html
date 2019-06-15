@@ -2,23 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
-<style type="text/css">
-    /*body{ margin:0px;padding-left: 100px; padding-right: 100px;}  <!--body顶格，body最顶部不留空白-->*/
-    body{ margin:0px;padding-left: 20px;}
-</style>
+<!--<style type="text/css">-->
+    <!--body{ margin:0px;padding-left: 20px;}-->
+<!--</style>-->
 <Script LANGUAGE="JavaScript">
-    /*<![CDATA[*/
     function getUniqueName()
     {
         var nameColumn = $("#nameColumn").val();
         var timeColumn = $("#timeColumn").val();
         var spaceColumn = $("#spaceColumn").val();
         var frequentPlaceColumn = $("#frequentPlaceColumn").val();
-
         $.ajax({
             url: '/getUniqueName',
             type: 'post',
-            dataType: 'json',
             contentType: 'application/json',
             async: true,
             data: JSON.stringify({
@@ -28,26 +24,32 @@
                 uniqueName: '',
                 frequentPlaceColumn: frequentPlaceColumn
             }),
-            sucess: function (data) {
-                if(data != null){
+            success: function(data){
+                $('#setting_table').html(data);
+            }
+        });
+    }
+    function previewSingle()
+    {
 
-                }
+        var nameColumn = $("#nameColumn").val();
+        var timeColumn = $("#timeColumn").val();
+        var spaceColumn = $("#spaceColumn").val();
+        var frequentPlaceColumn = $("#frequentPlaceColumn").val();
+        var uniqueName = $("#uniqueName").val();
+        $.ajax({
+            url: "/previewSingle",
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({nameColumn : nameColumn,timeColumn : timeColumn,spaceColumn : spaceColumn,uniqueName : uniqueName,frequentPlaceColumn : frequentPlaceColumn}),
+            async: true,
+            success: function(data){
+                $('#single_table').html(data);
 
             }
         });
     }
-    /*]]>*/
 
-    // function getUniqueName()
-    // {
-    //     document.timeSpaceForm.action="getUniqueName";
-    //     document.timeSpaceForm.submit();
-    // }
-    function previewSingle()
-    {
-        document.timeSpaceForm.action="previewSingle";
-        document.timeSpaceForm.submit();
-    }
     function previewSingleMap()
     {
         document.timeSpaceForm.action="previewSingleMap";
@@ -64,6 +66,7 @@
     <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <style>
+        body{ margin:0px;padding-left: 20px;}
         h3{font-size: 14px;}
         .control-label{width: auto;font-size: 14px;font-weight: normal;text-align: right;padding-top: 7px;padding-right: 0px;}
         .mylabel{font-size: 14px;font-weight: normal;}
@@ -104,7 +107,7 @@
                                 <div class="form-group" style="width: 70%;margin-left: 0px;">
                                     <label class="col-sm-3 control-label">数据表</label>
                                     <div class="col-sm-6">
-                                        <select class="form-control" name="tableName">
+                                        <select class="form-control" name="tableName" id="tableName">
                                             <option value="">请选择表名</option>
                                             <option th:each="tableName:${session.tableNames}" th:text="${tableName}" th:value = "${tableName}" th:selected="${session.database==null?false:session.tableName==tableName}"></option>
                                         </select>
@@ -143,7 +146,7 @@
                     <div class="panel-heading">
                         时空分析设置
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" id="setting_table" th:fragment="setting_table">
                         <form class="form-inline " name = "timeSpaceForm" >
                             <div class="form-group ">
                                 <label class="mylabel">人名字段</label>
@@ -183,7 +186,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <button type="submit" class="btn btn-info " onclick="previewSingle()">预览个人轨迹</button>
+                                    <button type="button" class="btn btn-info " onclick="previewSingle()">预览个人轨迹</button>
                                     <button type="button" class="btn btn-info " onclick="previewSingleMap()">预览个人轨迹图</button>
                                 </div>
                             </div>
@@ -191,11 +194,11 @@
                     </div>
                 </div>
 
-                <div th:if="${session.dataSource != null and session.timeSpaceForm !=null}" >
+                <div th:if="${session.dataSource != null}" >
                     <div class="panel-heading">
                         个人轨迹预览
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" id="single_table" th:fragment="single_table">
                         <table class="table table-bordered table-striped">
                             <thead>
                             <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">

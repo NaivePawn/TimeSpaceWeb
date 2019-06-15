@@ -6,6 +6,7 @@ public class Cluster {
     public  Cluster(){
 
     }
+
     public Cluster(int clusterNum){
         this.clusterNum = clusterNum;
     }
@@ -17,6 +18,5 @@ public class Cluster {
     public void setClusterNum(int clusterNum) {
         this.clusterNum = clusterNum;
     }
-
 
 }

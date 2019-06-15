@@ -1,6 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<script LANGUAGE="JavaScript">
+    function cluster() {
+        var clusterNum = $("#clusterNum").val();
+        $.ajax({
+            url: '/cluster',
+            type: 'post',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify({
+                clusterNum: clusterNum
+            }),
+            success: function(data){
+                $('#setting_cluster').html(data);
+            }
+        });
+    }
+
+    function label() {
+        var label1 = $("#label1").val();
+        var label2 = $("#label2").val();
+        var label3 = $("#label3").val();
+        var label4 = $("#label4").val();
+        var label5 = $("#label5").val();
+        var label6 = $("#label6").val();
+        var label7 = $("#label7").val();
+        var label8 = $("#label8").val();
+        var label9 = $("#label9").val();
+        var label10 = $("#label10").val();
+
+        $.ajax({
+            url: '/label',
+            type: 'post',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify({
+                label1: label1,
+                label2: label2,
+                label3: label3,
+                label4: label4,
+                label5: label5,
+                label6: label6,
+                label7: label7,
+                label8: label8,
+                label9: label9,
+                label10: label10
+            }),
+            success: function(data){
+                $('#setting_cluster').html(data);
+            }
+        });
+    }
+</script>
+
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -31,7 +85,8 @@
 </head>
 
 <body>
-<div id="container"></div>
+<div id="container">
+</div>
 
 <script language="JavaScript" th:inline="javascript">
     /* 用途: 接收地直栏参数 取id=1 根据ID的值 */
@@ -246,36 +301,41 @@
     map.centerAndZoom(new BMap.Point(centPos[0],centPos[1]), 8);
 </script>
 
-<br/>
-<h3>轨迹分析</h3>
-<br/>
-<table class="table table-bordered table-striped" align="center">
-    <thead>
-        <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
-            <th>实体</th>
-            <th>旅行标签</th>
-            <th>预警状态</th>
-            <th>预警颜色</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="item,userStat:${scores}">
-            <td th:text="${userStat.current.key}"></td>
-            <td th:text="${userStat.current.value.label}"></td>
-            <td th:text="${userStat.current.value.state}"></td>
-            <td align="center" style="color:#ffffff" th:bgcolor="${userStat.current.value.color}" width="10%">&nbsp;</td>
-        </tr>
-    </tbody>
-</table>
+<div>
+    <div class="panel-heading">
+        <h3>轨迹分析</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped" align="center">
+            <thead>
+            <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
+                <th>实体</th>
+                <th>旅行标签</th>
+                <th>预警状态</th>
+                <th>预警颜色</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,userStat:${scores}">
+                <td th:text="${userStat.current.key}"></td>
+                <td th:text="${userStat.current.value.label}"></td>
+                <td th:text="${userStat.current.value.state}"></td>
+                <td align="center" style="color:#ffffff" th:bgcolor="${userStat.current.value.color}" width="10%">&nbsp;</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<div class="form-inline" th:if="${session.scores != null}">
-    <br/>
-    <h3>聚类分析</h3>
-    <br/>
-    <form class="form-inline " th:action="@{/cluster} ">
-        <div class="form-group col-md-3">
-            <label class="mylabel">类数选择</label>
-                <select class="form-control" name="clusterNum">
+<div class="form-inline" th:if="${session.scores != null}" >
+    <div class="panel-heading">
+        <h3>聚类分析</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-inline">
+            <div class="form-group col-md-3">
+                <label class="mylabel">类数选择</label>
+                <select class="form-control" name="clusterNum" id="clusterNum">
                     <option value="">请选择</option>
                     <option value = "1" th:selected="${session.clusterNum==1}">1</option>
                     <option value = "2" th:selected="${session.clusterNum==2}">2</option>
@@ -288,63 +348,88 @@
                     <option value = "9" th:selected="${session.clusterNum==9}">9</option>
                     <option value = "10" th:selected="${session.clusterNum==10}">10</option>
                 </select>
-        </div>
-        <button type="submit" class="btn btn-info ">聚类</button>
-    </form>
-    <br/>
-    <br/>
+            </div>
+            <button type="button" class="btn btn-info " onclick="cluster()">聚类</button>
+        </form>
+    </div>
 
-    <form class="form-inline " th:action="@{/label} ">
-        <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null} and ${session.labeled == null}">
-            <thead>
+    <div class="panel-body" id="setting_cluster" th:fragment="setting_cluster">
+        <form class="form-inline ">
+            <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null} and ${session.labeled == null}">
+                <thead>
+                    <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
+                        <th>ClusterID</th>
+                        <th>实体</th>
+                        <th>标签</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item,userStat:${classAndNames}">
+                    <td th:text="${userStat.current.key}"></td>
+                    <td th:text="${userStat.current.value.nameList.toString().replace('[','').replace(']','')}"></td>
+                    <td><input type="text" class="form-control" th:id="'label'+${userStat.current.key}" th:name="'label'+${userStat.current.key}"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><button type="button" class="btn btn-info" th:align="center" onclick="label()">打上标签</button></td>
+                </tr>
+                </tbody>
+                <!--<tbody th:each="item,userStat:${classAndNames}">-->
+                    <!--<tr>-->
+                        <!--<td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>-->
+                        <!--<td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>-->
+                        <!---->
+                        <!--<td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}"><input type="text" class="form-control" th:id="'label'+${userStat.current.key}" th:name="'label'+${userStat.current.key}"/></td>-->
+                    <!--</tr>-->
+
+                    <!--<tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">-->
+                        <!--<td th:text="${userStat.current.value.nameList.get(i)}"></td>-->
+                    <!--</tr>-->
+                <!--</tbody>-->
+                <!--<tr>-->
+                    <!--<td></td>-->
+                    <!--<td></td>>-->
+                    <!--<td><button type="submit" class="btn btn-info">打上标签</button></td>-->
+                <!--</tr>-->
+            </table>
+
+            <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null and session.labeled == true}">
+                <thead>
                 <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
                     <th>ClusterID</th>
                     <th>实体</th>
                     <th>标签</th>
                 </tr>
-            </thead>
-            <tbody th:each="item,userStat:${classAndNames}">
-                <tr>
-                    <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
-                    <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
-                    <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}"><input type="text" class="form-control" th:id="'label'+${userStat.current.key}" th:name="'label'+${userStat.current.key}"/></td>
+                </thead>
+                <tbody>
+                <tr th:each="item,userStat:${classAndNames}">
+                    <td th:text="${userStat.current.key}"></td>
+                    <td th:text="${userStat.current.value.nameList.toString().replace('[','').replace(']','')}"></td>
+                    <td th:text="${userStat.current.value.label}"></td>
                 </tr>
-
-                <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
-                    <td th:text="${userStat.current.value.nameList.get(i)}"></td>
-                </tr>
-            </tbody>
-            <tr>
-                <td></td>
-                <td></td>>
-                <td><button type="submit" class="btn btn-info">打上标签</button></td>
-            </tr>
-        </table>
-    </form>
-
-    <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null and session.labeled==true}">
-        <thead>
-            <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
-                <th>ClusterID</th>
-                <th>实体</th>
-                <th>标签</th>
-            </tr>
-        </thead>
-        <tbody th:each="item,userStat:${classAndNames}">
-            <tr >
-                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
-                <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
-                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.value.label}"></td>>
-            </tr>
-            <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
-                <td th:text="${userStat.current.value.nameList.get(i)}"></td>
-            </tr>
-        </tbody>
-    </table>
+                </tbody>
+                <!--<tbody th:each="item,userStat:${classAndNames}">-->
+                <!--<tr >-->
+                <!--<td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>-->
+                <!--<td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>-->
+                <!--<td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.value.label}"></td>>-->
+                <!--</tr>-->
+                <!--<tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">-->
+                <!--<td th:text="${userStat.current.value.nameList.get(i)}"></td>-->
+                <!--</tr>-->
+                <!--</tbody>-->
+            </table>
+        </form>
+    </div>
 </div>
 
-<div align="center">
-    <button  class="btn btn-info " onclick="javascript:window.location.href='index1.html'">返回</button>
+<div>
+    <div class="panel-heading">
+        <form class="form-inline">
+            <button type="button" class="btn btn-info" onclick="javascript:window.location.href='index1.html'">返回</button>
+        </form>
+    </div>
 </div>
 
 </body>

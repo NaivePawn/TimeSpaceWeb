@@ -46,10 +46,10 @@ public class PeopleOrientation {
         sort();
         double dis = 0.0;
         for(int i=0 ; i<orientations.size()-1 ; i++){
-            System.out.println(orientations.get(i).getLng()+" "+
-                    orientations.get(i).getLat()+ " "+
-                    orientations.get(i+1).getLng()+" "+
-                    orientations.get(i+1).getLat());
+//            System.out.println(orientations.get(i).getLng()+" "+
+//                    orientations.get(i).getLat()+ " "+
+//                    orientations.get(i+1).getLng()+" "+
+//                    orientations.get(i+1).getLat());
             dis += DistanceUtil.calculateDistance(
                     orientations.get(i).getLng(),
                     orientations.get(i).getLat(),
