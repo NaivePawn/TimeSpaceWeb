@@ -3,14 +3,46 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <style type="text/css">
-    body{ margin:0px;padding-left: 100px; padding-right: 100px;}  <!--body顶格，body最顶部不留空白-->
+    /*body{ margin:0px;padding-left: 100px; padding-right: 100px;}  <!--body顶格，body最顶部不留空白-->*/
+    body{ margin:0px;padding-left: 20px;}
 </style>
-<Script Language="JavaScript">
+<Script LANGUAGE="JavaScript">
+    /*<![CDATA[*/
     function getUniqueName()
     {
-        document.timeSpaceForm.action="getUniqueName";
-        document.timeSpaceForm.submit();
+        var nameColumn = $("#nameColumn").val();
+        var timeColumn = $("#timeColumn").val();
+        var spaceColumn = $("#spaceColumn").val();
+        var frequentPlaceColumn = $("#frequentPlaceColumn").val();
+
+        $.ajax({
+            url: '/getUniqueName',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify({
+                nameColumn: nameColumn,
+                timeColumn: timeColumn,
+                spaceColumn: spaceColumn,
+                uniqueName: '',
+                frequentPlaceColumn: frequentPlaceColumn
+            }),
+            sucess: function (data) {
+                if(data != null){
+
+                }
+
+            }
+        });
     }
+    /*]]>*/
+
+    // function getUniqueName()
+    // {
+    //     document.timeSpaceForm.action="getUniqueName";
+    //     document.timeSpaceForm.submit();
+    // }
     function previewSingle()
     {
         document.timeSpaceForm.action="previewSingle";
@@ -46,7 +78,6 @@
     <div class="row">
         <div class="col-lg-12">
             <section class="panel">
-                <header class="panel-heading">时空分析组件数据源配置</header>
                 <div class="panel-body">
                     <div class="container">
                         <div class="row" style="width: 50%; margin-left: 25%;">
@@ -69,7 +100,7 @@
                             </form>
                         </div>
                         <div class="row" style="width: 50%; margin-left: 25%;margin-top: 10px;">
-                            <form class="form-inline " th:action="@{/preview} ">
+                            <form class="form-inline " th:action="@{/preview}">
                                 <div class="form-group" style="width: 70%;margin-left: 0px;">
                                     <label class="col-sm-3 control-label">数据表</label>
                                     <div class="col-sm-6">
@@ -94,7 +125,7 @@
                         <div class="form-inline">
                             <table class="table table-bordered table-striped">
                                 <thead>
-                                <tr role="row">
+                                <tr role="row" style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
                                     <th th:each="tableName:${session.previewColumn}" th:text="${tableName}">字段</th>
                                 </tr>
                                 </thead>
@@ -116,28 +147,28 @@
                         <form class="form-inline " name = "timeSpaceForm" >
                             <div class="form-group ">
                                 <label class="mylabel">人名字段</label>
-                                <select class="form-control" name="nameColumn">
+                                <select class="form-control" name="nameColumn" id="nameColumn">
                                     <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value ="${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.nameColumn==columnName}"></option>
                                 </select>
                             </div>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <div class="form-group "  >
                                 <label class="mylabel">时间字段</label>
-                                <select class="form-control" name="timeColumn">
+                                <select class="form-control" name="timeColumn" id="timeColumn">
                                     <option th:each="columnName:${session.previewColumn}" th:text="${columnName} " th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.timeColumn==columnName}"></option>
                                 </select>
                             </div>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <div class="form-group ">
                                 <label class="mylabel">地点字段</label>
-                                <select class="form-control" name="spaceColumn">
+                                <select class="form-control" name="spaceColumn" id="spaceColumn">
                                     <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.spaceColumn==columnName}"></option>
                                 </select>
                             </div>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <div class="form-group ">
                                 <label class="mylabel">常居地字段</label>
-                                <select class="form-control" name="frequentPlaceColumn">
+                                <select class="form-control" name="frequentPlaceColumn" id="frequentPlaceColumn">
                                     <option th:each="columnName:${session.previewColumn}" th:text="${columnName}" th:value = "${columnName}" th:selected="${session.timeSpaceForm==null?true:session.timeSpaceForm.frequentPlaceColumn==columnName}"></option>
                                 </select>
                             </div>
@@ -147,7 +178,7 @@
                             <div class="form-inline" >
                                 <div class="form-group col-md-3">
                                     <label class="mylabel">人员选择</label>
-                                    <select class="form-control" name="uniqueName">
+                                    <select class="form-control" name="uniqueName" id="uniqueName">
                                         <option  th:each="columnName:${session.uniqueNameList}" th:text="${columnName}" th:value = "${columnName}"></option>
                                     </select>
                                 </div>
@@ -167,7 +198,7 @@
                     <div class="panel-body">
                         <table class="table table-bordered table-striped">
                             <thead>
-                            <tr >
+                            <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
                                 <th th:each="columnName:${session.previewSingleColumn}" th:text="${columnName}">字段</th>
                             </tr>
                             </thead>

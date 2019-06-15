@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -53,7 +55,7 @@ public class MainController {
 
         String database = (String) httpSession.getAttribute("database");
         if(database.equals("population")){
-            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/test");
+            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/timespacedatasource");
         } else if (database.equals("legalperson")) {
             //TODO
 //            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/fusion");
@@ -69,7 +71,7 @@ public class MainController {
             return "index";
         }
         myDataSource.setUserName("root");
-        myDataSource.setPassword("123456");
+        myDataSource.setPassword("root");
 
         PreviewData previewData = mainService.preview(myDataSource);
         if(previewData != null) {
@@ -91,8 +93,9 @@ public class MainController {
     private String connectDatabase(MyDataSourceProperty myDataSource, Model model, HttpSession httpSession) {
 
         httpSession.setAttribute("database", myDataSource.getDataSourceUrl());
+        System.out.println(myDataSource.getDataSourceUrl());
         if(myDataSource.getDataSourceUrl().equals("population")){
-            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/test");
+            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/timespacedatasource");
         } else if (myDataSource.getDataSourceUrl().equals("legalperson")) {
             //TODO
 //            myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/fusion");
@@ -108,7 +111,7 @@ public class MainController {
             return "index";
         }
         myDataSource.setUserName("root");
-        myDataSource.setPassword("123456");
+        myDataSource.setPassword("root");
 
         PreviewTable previewTable = mainService.getTables(myDataSource);
         if(previewTable != null){
@@ -123,15 +126,16 @@ public class MainController {
         return "index";
     }
 
-    @RequestMapping("/getUniqueName")
-    private String getUniqueName(TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
+    @PostMapping("/getUniqueName")
+    private String getUniqueName(@RequestBody TimeSpaceForm timeSpaceForm, Model model, HttpSession httpSession){
 
         if(httpSession.getAttribute("dataSource") == null){
             return "index";
         }
-        MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty)httpSession.getAttribute("dataSource");
+        MyDataSourceProperty myDataSourceProperty = (MyDataSourceProperty) httpSession.getAttribute("dataSource");
         httpSession.setAttribute("timeSpaceForm", timeSpaceForm);
         List<Object> res = mainService.getUniqueName(myDataSourceProperty, timeSpaceForm);
+        System.out.println(res);
         httpSession.removeAttribute("previewSingleColumn");
         httpSession.removeAttribute("previewSingleData");
         httpSession.setAttribute("uniqueNameList",res);
@@ -204,6 +208,8 @@ public class MainController {
         ModelAndView view = new ModelAndView(url);
         view.addObject("data",traces);
         view.addObject("scores",scores);
+        httpSession.removeAttribute("scores");
+        httpSession.removeAttribute("data");
         return view;
     }
 
@@ -250,7 +256,97 @@ public class MainController {
         ModelAndView view = new ModelAndView(url);
         view.addObject("data",traces);
         view.addObject("scores",scores);
+        httpSession.setAttribute("scores", scores);
+        httpSession.setAttribute("data", traces);
+
         return view;
     }
 
+    @RequestMapping("/cluster")
+    private ModelAndView cluster(Cluster cluster, HttpSession httpSession){
+        Map<String, PersonStatus> scores = (Map<String, PersonStatus>) httpSession.getAttribute("scores");
+        ArrayList<Trace> traces = (ArrayList<Trace>) httpSession.getAttribute("data");
+        int clusterNum = cluster.getClusterNum();
+        Map<Integer, ClusterNameLabel> classAndNames = new HashMap<Integer, ClusterNameLabel>();
+        for(String name : scores.keySet()){
+            PersonStatus tmp = scores.get(name);
+            double state = tmp.getState();
+            int clusterID = 0;
+            for(int i = 0;i < clusterNum; i++){
+                if(state >= (double)i/clusterNum && state <= (double)(i+1)/clusterNum){
+                    clusterID = i+1;
+                    break;
+                }
+            }
+            if(classAndNames.containsKey(clusterID)){
+                classAndNames.get(clusterID).getNameList().add(name);
+            }
+            else {
+                List<String> nameList = new ArrayList<String>();
+                nameList.add(name);
+                ClusterNameLabel clusterNameLabel = new ClusterNameLabel();
+                clusterNameLabel.setClusterID(clusterID);
+                clusterNameLabel.setNameList(nameList);
+                classAndNames.put(clusterID, clusterNameLabel);
+            }
+        }
+        for(int i = 0; i< clusterNum;i++){
+            if(!classAndNames.containsKey(i+1)){
+                List<String> nameList = new ArrayList<String>();
+                ClusterNameLabel clusterNameLabel = new ClusterNameLabel();
+                clusterNameLabel.setClusterID(i+1);
+                clusterNameLabel.setNameList(nameList);
+                classAndNames.put(i+1, clusterNameLabel);
+            }
+        }
+
+        httpSession.setAttribute("classAndNames", classAndNames);
+        httpSession.setAttribute("clusterNum",clusterNum);
+        httpSession.setAttribute("scores", scores);
+        httpSession.setAttribute("data", traces);
+        httpSession.removeAttribute("labeled");
+
+        String url = "track";
+        ModelAndView view = new ModelAndView(url);
+        view.addObject("data",traces);
+        view.addObject("scores",scores);
+        view.addObject("classAndNames", classAndNames);
+        return view;
+    }
+
+    @RequestMapping("/label")
+    private ModelAndView label(Label labels, HttpSession httpSession) {
+        Map<String, PersonStatus> scores = (Map<String, PersonStatus>) httpSession.getAttribute("scores");
+        ArrayList<Trace> traces = (ArrayList<Trace>) httpSession.getAttribute("data");
+
+        List<String> labelList = new ArrayList<String>();
+        labelList.add(labels.getLabel1());
+        labelList.add(labels.getLabel2());
+        labelList.add(labels.getLabel3());
+        labelList.add(labels.getLabel4());
+        labelList.add(labels.getLabel5());
+        labelList.add(labels.getLabel6());
+        labelList.add(labels.getLabel7());
+        labelList.add(labels.getLabel8());
+        labelList.add(labels.getLabel9());
+        labelList.add(labels.getLabel10());
+
+        System.out.println(labelList);
+
+        Map<Integer, ClusterNameLabel> classAndNames = (Map<Integer, ClusterNameLabel>) httpSession.getAttribute("classAndNames");
+
+        for(Integer clusterID : classAndNames.keySet()){
+            classAndNames.get(clusterID).setLabel(labelList.get(clusterID-1));
+        }
+
+        httpSession.setAttribute("classAndNames", classAndNames);
+        httpSession.setAttribute("labeled", true);
+
+        String url = "track";
+        ModelAndView view = new ModelAndView(url);
+        view.addObject("data",traces);
+        view.addObject("scores",scores);
+        view.addObject("classAndNames", classAndNames);
+        return view;
+    }
 }

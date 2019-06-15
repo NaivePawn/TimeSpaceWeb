@@ -7,7 +7,8 @@
     <title>Track Presentation</title>
     <style type="text/css">
         html{height:100%}
-        body{height:110%;margin:0px;padding-left: 100px;padding-right: 100px;}
+        /*body{height:110%;margin:0px;padding-left: 100px;padding-right: 100px;}*/
+        body{height:110%;margin:0px;padding-left: 20px;}
         #container{height:100%;margin: 0px;width: 100%}
     </style>
     <link rel="stylesheet" th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}"/>
@@ -242,7 +243,7 @@
     var markerMap = new Map();
     next();
     var centPos = getCenterPosition(positions);
-    map.centerAndZoom(new BMap.Point(centPos[0],centPos[1]), 9);
+    map.centerAndZoom(new BMap.Point(centPos[0],centPos[1]), 8);
 </script>
 
 <br/>
@@ -250,21 +251,20 @@
 <br/>
 <table class="table table-bordered table-striped" align="center">
     <thead>
-    <tr >
-        <th>实体</th>
-        <th>旅行标签</th>
-        <th>预警状态</th>
-        <th>预警颜色</th>
-    </tr>
+        <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
+            <th>实体</th>
+            <th>旅行标签</th>
+            <th>预警状态</th>
+            <th>预警颜色</th>
+        </tr>
     </thead>
     <tbody>
-    <tr th:each="item,userStat:${scores}">
-        <td th:text="${userStat.current.key}"></td>
-        <td th:text="${userStat.current.value.label}"></td>
-        <td th:text="${userStat.current.value.state}"></td>
-        <td align="center" style="color:#ffffff" th:bgcolor="${userStat.current.value.color}" width="10%">&nbsp;</td>
-
-    </tr>
+        <tr th:each="item,userStat:${scores}">
+            <td th:text="${userStat.current.key}"></td>
+            <td th:text="${userStat.current.value.label}"></td>
+            <td th:text="${userStat.current.value.state}"></td>
+            <td align="center" style="color:#ffffff" th:bgcolor="${userStat.current.value.color}" width="10%">&nbsp;</td>
+        </tr>
     </tbody>
 </table>
 
@@ -275,23 +275,21 @@
     <form class="form-inline " th:action="@{/cluster} ">
         <div class="form-group col-md-3">
             <label class="mylabel">类数选择</label>
-            <select class="form-control" name="clusterNum">
-                <option value="">请选择</option>
-                <option value = "1" th:selected="${session.clusterNum==1}">1</option>
-                <option value = "2" th:selected="${session.clusterNum==2}">2</option>
-                <option value = "3" th:selected="${session.clusterNum==3}">3</option>
-                <option value = "4" th:selected="${session.clusterNum==4}">4</option>
-                <option value = "5" th:selected="${session.clusterNum==5}">5</option>
-                <option value = "6" th:selected="${session.clusterNum==6}">6</option>
-                <option value = "7" th:selected="${session.clusterNum==7}">7</option>
-                <option value = "8" th:selected="${session.clusterNum==8}">8</option>
-                <option value = "9" th:selected="${session.clusterNum==9}">9</option>
-                <option value = "10" th:selected="${session.clusterNum==10}">10</option>
-            </select>
+                <select class="form-control" name="clusterNum">
+                    <option value="">请选择</option>
+                    <option value = "1" th:selected="${session.clusterNum==1}">1</option>
+                    <option value = "2" th:selected="${session.clusterNum==2}">2</option>
+                    <option value = "3" th:selected="${session.clusterNum==3}">3</option>
+                    <option value = "4" th:selected="${session.clusterNum==4}">4</option>
+                    <option value = "5" th:selected="${session.clusterNum==5}">5</option>
+                    <option value = "6" th:selected="${session.clusterNum==6}">6</option>
+                    <option value = "7" th:selected="${session.clusterNum==7}">7</option>
+                    <option value = "8" th:selected="${session.clusterNum==8}">8</option>
+                    <option value = "9" th:selected="${session.clusterNum==9}">9</option>
+                    <option value = "10" th:selected="${session.clusterNum==10}">10</option>
+                </select>
         </div>
-        <div class="form-group col-md-3">
-            <button type="submit" class="btn btn-info ">聚类</button>
-        </div>
+        <button type="submit" class="btn btn-info ">聚类</button>
     </form>
     <br/>
     <br/>
@@ -299,22 +297,22 @@
     <form class="form-inline " th:action="@{/label} ">
         <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null} and ${session.labeled == null}">
             <thead>
-            <tr>
-                <th>ClusterID</th>
-                <th>实体</th>
-                <th>标签</th>
-            </tr>
+                <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
+                    <th>ClusterID</th>
+                    <th>实体</th>
+                    <th>标签</th>
+                </tr>
             </thead>
             <tbody th:each="item,userStat:${classAndNames}">
-            <tr>
-                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
-                <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
-                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}"><input type="text" class="form-control" th:id="'label'+${userStat.current.key}" th:name="'label'+${userStat.current.key}"/></td>
-            </tr>
+                <tr>
+                    <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
+                    <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
+                    <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}"><input type="text" class="form-control" th:id="'label'+${userStat.current.key}" th:name="'label'+${userStat.current.key}"/></td>
+                </tr>
 
-            <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
-                <td th:text="${userStat.current.value.nameList.get(i)}"></td>
-            </tr>
+                <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
+                    <td th:text="${userStat.current.value.nameList.get(i)}"></td>
+                </tr>
             </tbody>
             <tr>
                 <td></td>
@@ -326,27 +324,26 @@
 
     <table class="table table-bordered table-striped" align="center" th:if="${session.classAndNames != null and session.labeled==true}">
         <thead>
-        <tr>
-            <th>ClusterID</th>
-            <th>实体</th>
-            <th>标签</th>
-        </tr>
+            <tr style="background-color: #00a4e7;color: #ffffff; font-weight: normal">
+                <th>ClusterID</th>
+                <th>实体</th>
+                <th>标签</th>
+            </tr>
         </thead>
         <tbody th:each="item,userStat:${classAndNames}">
-        <tr >
-            <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
-            <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
-            <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.value.label}"></td>>
-        </tr>
-        <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
-            <td th:text="${userStat.current.value.nameList.get(i)}"></td>
-        </tr>
+            <tr >
+                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.key}"></td>
+                <td th:text="${userStat.current.value.nameList.size()!= 0?userStat.current.value.nameList.get(0):null}"></td>
+                <td th:rowspan="${userStat.current.value.nameList.size()==0?1:userStat.current.value.nameList.size()}" th:text="${userStat.current.value.label}"></td>>
+            </tr>
+            <tr th:each="i:${userStat.current.value.nameList.size()-1 >= 1 ? #numbers.sequence(1, userStat.current.value.nameList.size()-1):null}">
+                <td th:text="${userStat.current.value.nameList.get(i)}"></td>
+            </tr>
         </tbody>
     </table>
-
 </div>
 
-<div th:align="center">
+<div align="center">
     <button  class="btn btn-info " onclick="javascript:window.location.href='index1.html'">返回</button>
 </div>
 
