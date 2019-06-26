@@ -92,7 +92,7 @@ public class MainController {
     private String connectDatabase(MyDataSourceProperty myDataSource, Model model, HttpSession httpSession) {
 
         httpSession.setAttribute("database", myDataSource.getDataSourceUrl());
-//        System.out.println(myDataSource.getDataSourceUrl());
+
         if(myDataSource.getDataSourceUrl().equals("population")){
             myDataSource.setDataSourceUrl("jdbc:mysql://localhost:3306/timespacedatasource");
         } else if (myDataSource.getDataSourceUrl().equals("legalperson")) {
